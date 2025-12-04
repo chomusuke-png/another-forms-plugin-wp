@@ -4,37 +4,38 @@ if (!defined('ABSPATH')) exit;
 class AFP_Handler {
 
     public function __construct() {
-        // Escuchamos el envío del formulario (POST)
-        // 'admin_post_' es un hook nativo de WP para manejar formularios custom
         add_action('admin_post_nopriv_process_another_form', array($this, 'handle_submission'));
         add_action('admin_post_process_another_form', array($this, 'handle_submission'));
     }
 
     public function handle_submission() {
-        // 1. Seguridad: Verificar Nonce
         if (!isset($_POST['afp_nonce']) || !wp_verify_nonce($_POST['afp_nonce'], 'afp_verify_action')) {
             wp_die('Error de seguridad: Acceso no autorizado.');
         }
 
-        // 2. Sanitización (Limpieza de datos)
         $name    = sanitize_text_field($_POST['afp_name']);
         $email   = sanitize_email($_POST['afp_email']);
-        $subject = sanitize_text_field($_POST['afp_subject']);
+        // Aquí recibimos el asunto automático (hidden)
+        $subject = sanitize_text_field($_POST['afp_subject']); 
         $message = sanitize_textarea_field($_POST['afp_message']);
 
-        // 3. Lógica de Envío (Correo)
+        // Configuración del correo
         $admin_email = get_option('admin_email');
         $headers     = array('Content-Type: text/html; charset=UTF-8', "Reply-To: $name <$email>");
         
-        $body  = "<h3>Nuevo contacto desde la web</h3>";
-        $body .= "<p><strong>Nombre:</strong> $name</p>";
-        $body .= "<p><strong>Email:</strong> $email</p>";
-        $body .= "<p><strong>Mensaje:</strong><br>" . nl2br($message) . "</p>";
+        // Cuerpo del mensaje mejorado
+        $body  = "<div style='font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee;'>";
+        $body .= "<h2 style='color: #947e1e;'>$subject</h2>"; // Título con el asunto automático
+        $body .= "<p><strong>De:</strong> $name ($email)</p>";
+        $body .= "<hr>";
+        $body .= "<p><strong>Mensaje:</strong></p>";
+        $body .= "<p style='background: #f9f9f9; padding: 15px;'>" . nl2br($message) . "</p>";
+        $body .= "</div>";
 
-        $sent = wp_mail($admin_email, "Contacto: $subject", $body, $headers);
+        // El asunto del correo real llevará el prefijo automático
+        $sent = wp_mail($admin_email, "[$subject] Nuevo mensaje de $name", $body, $headers);
 
-        // 4. Redirección
-        $redirect_url = wp_get_referer(); // Vuelve a la página donde estaba el usuario
+        $redirect_url = wp_get_referer();
         
         if ($sent) {
             $redirect_url = add_query_arg('afp_status', 'success', $redirect_url);
