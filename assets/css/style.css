@@ -1,68 +1,101 @@
-/* Contenedor del formulario */
-.afp-form {
-    max-width: 600px;
-    margin: 20px 0;
-    padding: 20px;
-    background: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-
-/* Filas */
+/* Filas del Formulario */
 .afp-row {
-    margin-bottom: 15px;
+    margin-bottom: 25px;    /* Espacio entre campos */
 }
 
-/* Etiquetas */
+/* Etiquetas (Labels) */
 .afp-row label {
     display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #333;
+    margin-bottom: 8px;
+    font-weight: 600;       /* Negrita suave */
+    color: #333;            /* Gris oscuro */
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
 }
 
-/* Inputs */
+/* Inputs y Textarea */
 .afp-row input[type="text"],
 .afp-row input[type="email"],
 .afp-row textarea {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box; /* Para que el padding no rompa el ancho */
+    padding: 14px 16px;     /* Inputs más altos y cómodos */
+    border: 2px solid #f4f6f8; /* Borde inicial muy suave */
+    background-color: #f9fafb; /* Fondo grisáceo muy claro */
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #444;
+    transition: all 0.3s ease; /* Animación suave */
+    box-sizing: border-box;    /* Asegura que no se salgan del contenedor */
 }
 
-/* Botón */
+/* Efecto al hacer clic (Focus) */
+.afp-row input:focus,
+.afp-row textarea:focus {
+    border-color: #947e1e;  /* Tu color mostaza */
+    background-color: #ffffff;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(148, 126, 30, 0.15); /* Resplandor mostaza */
+}
+
+.afp-row textarea {
+    resize: vertical;       /* Permite redimensionar solo verticalmente */
+    min-height: 140px;      /* Altura mínima decente */
+}
+
+/* Botón de Enviar */
 .afp-btn {
-    background-color: #947e1e; /* Tu color mostaza corporativo */
+    display: block;
+    width: 100%;            /* Botón ancho completo (se ve genial centrado) */
+    background-color: #947e1e;
     color: white;
-    padding: 10px 20px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 16px;
     border: none;
-    border-radius: 4px;
+    border-radius: 50px;    /* Estilo "Píldora" */
     cursor: pointer;
-    font-size: 16px;
-    transition: background 0.3s;
+    font-size: 1rem;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    margin-top: 10px;
+    box-shadow: 0 4px 15px rgba(148, 126, 30, 0.3); /* Sombra de color */
 }
 
 .afp-btn:hover {
-    background-color: #7a6615;
+    background-color: #7a6615; /* Un tono más oscuro */
+    transform: translateY(-3px); /* Se eleva un poco */
+    box-shadow: 0 8px 25px rgba(148, 126, 30, 0.4);
 }
 
-/* Mensajes de alerta */
+/* Mensajes de Alerta (Éxito/Error) */
 .afp-alert {
-    padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 4px;
+    padding: 15px 20px;
+    margin-bottom: 30px;
+    border-radius: 8px;
+    font-weight: 500;
+    text-align: center;     /* Texto centrado */
+    font-size: 0.95rem;
 }
 
 .afp-alert.success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
 }
 
 .afp-alert.error {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+}
+
+/* =========================================
+   RESPONSIVE (MÓVIL)
+   ========================================= */
+@media (max-width: 600px) {
+    .afp-form {
+        margin: 30px 20px;  /* Margen lateral para que no pegue a los bordes */
+        padding: 30px 20px; /* Un poco menos de padding interno */
+        width: auto;        /* Se adapta */
+    }
 }
