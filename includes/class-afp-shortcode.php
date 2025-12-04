@@ -52,7 +52,7 @@ class AFP_Shortcode {
                 </div>
 
                 <div class="afp-row">
-                    <label for="afp_message">Mensaje / Comentarios</label>
+                    <label for="afp_message">Mensaje</label>
                     <textarea name="afp_message" id="afp_message" rows="5" required></textarea>
                 </div>
 
