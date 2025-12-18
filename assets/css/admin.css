@@ -1,0 +1,133 @@
+#afp-builder-app {
+    background: #fff;
+    padding: 20px;
+    border: 1px solid #ccd0d4;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.04);
+}
+
+.afp-toolbar {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.afp-toolbar .button { margin-right: 5px; margin-bottom: 5px; }
+
+/* --- Tarjetas de Campos --- */
+.afp-card {
+    border: 1px solid #e5e5e5;
+    background: #fff;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+}
+
+/* Cabecera de la tarjeta (Donde están los botones desalineados) */
+.afp-card-header {
+    padding: 10px 15px; /* Un poco más de aire a los lados */
+    background: #f8f9fa;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center; /* Alineación vertical central estricta */
+    gap: 12px;
+    cursor: move;
+}
+
+/* Icono de mover (Handle) */
+.afp-handle { 
+    cursor: move; 
+    color: #999; 
+    margin-top: 2px; /* Pequeño ajuste visual */
+}
+
+/* Badge del tipo de campo */
+.afp-type-badge { 
+    background: #e5e5e5; 
+    padding: 3px 8px; 
+    border-radius: 3px; 
+    font-size: 11px; 
+    font-weight: 600;
+    text-transform: uppercase; 
+    color: #555;
+}
+
+/* Input del Label (Preview) */
+.afp-input-label-preview {
+    flex: 1; /* Ocupa todo el espacio disponible */
+    font-weight: 600;
+    border: 1px solid transparent !important; /* Invisible por defecto */
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 5px !important;
+    color: #333;
+}
+.afp-input-label-preview:focus, 
+.afp-input-label-preview:hover { 
+    background: #fff !important; 
+    border-color: #8c8f94 !important; /* Aparece al pasar el mouse */
+}
+
+/* --- CORRECCIÓN DE BOTONES DE ACCIÓN --- */
+.afp-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px; /* Espacio entre botones */
+    margin-left: auto; /* Empuja los botones a la derecha */
+}
+
+/* Estilo del botón contenedor */
+.afp-actions button {
+    display: flex;           /* Flex para centrar el icono dentro */
+    align-items: center;     /* Centrado Vertical */
+    justify-content: center; /* Centrado Horizontal */
+    width: 32px;             /* Cuadrado perfecto */
+    height: 32px;
+    padding: 0 !important;   /* Quitamos padding nativo */
+    border: 1px solid #ccc;
+    background: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #50575e;
+    transition: all 0.2s ease;
+}
+
+/* Hover de los botones */
+.afp-actions button:hover {
+    background: #f0f0f1;
+    border-color: #2271b1;
+    color: #2271b1;
+}
+
+/* Botón de eliminar (Rojo al hover) */
+.afp-actions button.afp-remove-row:hover {
+    border-color: #d63638;
+    color: #d63638;
+    background: #fbeaea;
+}
+
+/* El Ícono dentro del botón (Dashicon) */
+.afp-actions button .dashicons {
+    font-size: 18px;    /* Tamaño controlado */
+    width: 18px;
+    height: 18px;
+    line-height: 1;     /* Evita desplazamientos verticales */
+    margin: 0;          /* Sin márgenes extraños */
+}
+
+/* --- Cuerpo y Secciones --- */
+.afp-card-body { padding: 15px; display: none; border-top: 1px solid #f0f0f1; }
+.afp-form-row { margin-bottom: 12px; }
+.afp-flex { display: flex; align-items: center; }
+
+/* Estilo para secciones */
+.afp-section-card { border-left: 4px solid #2271b1; }
+.afp-section-card .afp-card-header { background: #eaf4fc; }
+
+/* Placeholder Drag and Drop */
+.afp-sortable-placeholder {
+    border: 2px dashed #b5b5b5;
+    background: #f6f7f7;
+    height: 52px; /* Altura aproximada de una tarjeta cerrada */
+    margin-bottom: 10px;
+    border-radius: 4px;
+}

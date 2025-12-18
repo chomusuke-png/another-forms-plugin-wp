@@ -9,77 +9,83 @@ class AFP_Handler {
     }
 
     public function handle_submission() {
-        // 1. Verificaciones de seguridad básicas
-        if (!isset($_POST['afp_nonce']) || !wp_verify_nonce($_POST['afp_nonce'], 'afp_verify_action')) {
-            wp_die('Error de seguridad.');
-        }
+        if (!isset($_POST['afp_nonce']) || !wp_verify_nonce($_POST['afp_nonce'], 'afp_verify_action')) die('Sec Error');
 
-        // 2. VERIFICACIÓN DE CAPTCHA
-        $captcha_input = isset($_POST['afp_captcha_input']) ? sanitize_text_field($_POST['afp_captcha_input']) : '';
-        $captcha_hash  = isset($_POST['afp_captcha_hash']) ? $_POST['afp_captcha_hash'] : '';
-
-        // Comparamos el hash de lo que escribió el usuario con el hash esperado
-        if (wp_hash($captcha_input) !== $captcha_hash) {
-            $redirect_url = wp_get_referer();
-            $redirect_url = add_query_arg('afp_status', 'captcha_error', $redirect_url);
-            wp_redirect($redirect_url);
-            exit;
-        }
-
-        $form_id = isset($_POST['afp_form_id']) ? intval($_POST['afp_form_id']) : 0;
-        if (!$form_id) wp_die('ID de formulario inválido.');
-
-        // 3. Cargar configuración
+        $form_id  = intval($_POST['afp_form_id']);
         $settings = get_post_meta($form_id, '_afp_settings', true);
+
+        // --- VALIDACIÓN RECAPTCHA V2 ---
+        $secret_key = isset($settings['recaptcha_secret_key']) ? $settings['recaptcha_secret_key'] : '';
+        
+        if (!empty($secret_key)) {
+            $captcha_response = isset($_POST['g-recaptcha-response']) ? $_POST['g-recaptcha-response'] : '';
+            
+            if (empty($captcha_response)) {
+                $this->redirect_with_status('captcha_error');
+            }
+
+            $verify_response = wp_remote_post('https://www.google.com/recaptcha/api/siteverify', array(
+                'body' => array(
+                    'secret'   => $secret_key,
+                    'response' => $captcha_response
+                )
+            ));
+
+            if (is_wp_error($verify_response)) {
+                $this->redirect_with_status('error');
+            }
+
+            $response_body = wp_remote_retrieve_body($verify_response);
+            $result = json_decode($response_body);
+
+            if (!$result->success) {
+                $this->redirect_with_status('captcha_error');
+            }
+        }
+        // --- FIN VALIDACIÓN ---
+
         $fields   = get_post_meta($form_id, '_afp_fields', true);
         $raw_data = isset($_POST['afp_data']) ? $_POST['afp_data'] : array();
 
-        // 4. Construir cuerpo del correo
-        $message_content = "";
-        $reply_to_email  = "";
-        $reply_to_name   = "Usuario";
+        $message = "";
+        $reply_to = "";
+        $name_ref = "Usuario";
 
         foreach ($fields as $field) {
-            $key   = $field['name'];
-            $label = $field['label'];
-            $value = isset($raw_data[$key]) ? $raw_data[$key] : '';
-
-            if ($field['type'] === 'email') {
-                $value = sanitize_email($value);
-                if (empty($reply_to_email)) $reply_to_email = $value;
-            } elseif ($field['type'] === 'textarea') {
-                $value = sanitize_textarea_field($value);
-            } else {
-                $value = sanitize_text_field($value);
-                if ((strpos($key, 'name') !== false || strpos($key, 'nombre') !== false) && $reply_to_name === "Usuario") {
-                    $reply_to_name = $value;
-                }
+            if ($field['type'] === 'section') {
+                $message .= "<h3 style='background:#eee; padding:5px;'>".esc_html($field['label'])."</h3>";
+                continue;
             }
-            $message_content .= "<p><strong>$label:</strong><br>" . nl2br($value) . "</p>";
+
+            $key = $field['name'];
+            if (!isset($raw_data[$key])) continue;
+
+            $val = $raw_data[$key];
+
+            if (is_array($val)) {
+                $val = implode(", ", array_map('sanitize_text_field', $val));
+            } else {
+                if ($field['type'] === 'textarea') $val = sanitize_textarea_field($val);
+                else $val = sanitize_text_field($val);
+            }
+
+            if ($field['type'] === 'email' && empty($reply_to)) $reply_to = $val;
+            
+            $message .= "<p><strong>".esc_html($field['label']).":</strong><br>".nl2br($val)."</p>";
         }
 
-        // 5. Enviar
-        $to      = !empty($settings['email']) ? $settings['email'] : get_option('admin_email');
-        $subject = !empty($settings['subject']) ? $settings['subject'] : 'Nuevo Contacto';
-        $subject = "[$subject] mensaje de $reply_to_name";
-
+        $to = $settings['email'];
+        $subject = "[$settings[subject]] Nuevo contacto";
         $headers = array('Content-Type: text/html; charset=UTF-8');
-        if ($reply_to_email) {
-            $headers[] = "Reply-To: $reply_to_name <$reply_to_email>";
-        }
+        if ($reply_to) $headers[] = "Reply-To: <$reply_to>";
 
-        $body  = "<div style='font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee;'>";
-        $body .= "<h2 style='color: #333;'>" . get_the_title($form_id) . "</h2>";
-        $body .= $message_content;
-        $body .= "<hr><small>Enviado desde el sitio web.</small>";
-        $body .= "</div>";
-
-        $sent = wp_mail($to, $subject, $body, $headers);
-
-        $redirect_url = wp_get_referer();
-        $status = $sent ? 'success' : 'error';
-        $redirect_url = add_query_arg('afp_status', $status, $redirect_url);
+        $sent = wp_mail($to, $subject, $message, $headers);
         
+        $this->redirect_with_status($sent ? 'success' : 'error');
+    }
+
+    private function redirect_with_status($status) {
+        $redirect_url = add_query_arg('afp_status', $status, wp_get_referer());
         wp_redirect($redirect_url);
         exit;
     }
