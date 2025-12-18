@@ -31,7 +31,7 @@
 /* Efecto al hacer clic (Focus) */
 .afp-row input:focus,
 .afp-row textarea:focus {
-    border-color: #947e1e;  /* Tu color mostaza */
+    border-color: #1a428a;
     background-color: #ffffff;
     outline: none;
     box-shadow: 0 0 0 4px rgba(148, 126, 30, 0.15); /* Resplandor mostaza */
@@ -46,7 +46,7 @@
 .afp-btn {
     display: block;
     width: 100%;            /* Botón ancho completo (se ve genial centrado) */
-    background-color: #947e1e;
+    background-color: #1a428a;
     color: white;
     font-weight: 700;
     text-transform: uppercase;
@@ -62,7 +62,7 @@
 }
 
 .afp-btn:hover {
-    background-color: #7a6615; /* Un tono más oscuro */
+    background-color: #132f64; /* Un tono más oscuro */
     transform: translateY(-3px); /* Se eleva un poco */
     box-shadow: 0 8px 25px rgba(148, 126, 30, 0.4);
 }
