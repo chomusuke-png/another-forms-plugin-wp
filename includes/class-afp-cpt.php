@@ -49,7 +49,10 @@ class AFP_CPT {
         $recipient_email = isset($settings['email']) ? $settings['email'] : get_option('admin_email');
         $email_subject   = isset($settings['subject']) ? $settings['subject'] : 'Nuevo Mensaje';
         $btn_text        = isset($settings['btn_text']) ? $settings['btn_text'] : 'Enviar';
-        $btn_color       = isset($settings['btn_color']) ? $settings['btn_color'] : '#1a428a'; // Color por defecto (Mostaza)
+        $btn_color       = isset($settings['btn_color']) ? $settings['btn_color'] : '#1a428a'; 
+        
+        // Nueva opción: Ocultar Título
+        $hide_title      = isset($settings['hide_title']) ? $settings['hide_title'] : 0;
 
         if (empty($fields)) $fields = array(); 
         ?>
@@ -70,14 +73,19 @@ class AFP_CPT {
                     <td><input type="text" name="afp_settings[subject]" value="<?php echo esc_attr($email_subject); ?>" class="regular-text"></td>
                 </tr>
                 <tr>
-                    <th><label>Texto del Botón</label></th>
-                    <td><input type="text" name="afp_settings[btn_text]" value="<?php echo esc_attr($btn_text); ?>" class="regular-text"></td>
+                    <th><label>Opciones Visuales</label></th>
+                    <td>
+                        <label>
+                            <input type="checkbox" name="afp_settings[hide_title]" value="1" <?php checked($hide_title, 1); ?>>
+                            Ocultar Título del formulario
+                        </label>
+                    </td>
                 </tr>
                 <tr>
-                    <th><label>Color del Botón</label></th>
+                    <th><label>Botón de Enviar</label></th>
                     <td>
-                        <input type="color" name="afp_settings[btn_color]" value="<?php echo esc_attr($btn_color); ?>">
-                        <span class="description">Selecciona el color principal del botón.</span>
+                        <input type="text" name="afp_settings[btn_text]" value="<?php echo esc_attr($btn_text); ?>" placeholder="Texto del botón">
+                        <input type="color" name="afp_settings[btn_color]" value="<?php echo esc_attr($btn_color); ?>" style="vertical-align: middle; margin-left: 10px;">
                     </td>
                 </tr>
             </table>
@@ -107,7 +115,7 @@ class AFP_CPT {
                 jQuery(document).ready(function($) {
                     var container = $('#afp-fields-container');
                     $('#add-afp-field').on('click', function() {
-                        var index = container.children().length + 100; // Evitar conflictos de índice
+                        var index = container.children().length + 100; 
                         var html = `
                             <div class="afp-field-item">
                                 <input type="text" name="afp_fields[`+index+`][label]" placeholder="Etiqueta" required>
@@ -134,18 +142,17 @@ class AFP_CPT {
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
         if (!current_user_can('edit_post', $post_id)) return;
 
-        // Guardar Configuración General
         if (isset($_POST['afp_settings'])) {
             $clean_settings = array(
-                'email'    => sanitize_email($_POST['afp_settings']['email']),
-                'subject'  => sanitize_text_field($_POST['afp_settings']['subject']),
-                'btn_text' => sanitize_text_field($_POST['afp_settings']['btn_text']),
-                'btn_color'=> sanitize_hex_color($_POST['afp_settings']['btn_color']), // Sanitización de color
+                'email'      => sanitize_email($_POST['afp_settings']['email']),
+                'subject'    => sanitize_text_field($_POST['afp_settings']['subject']),
+                'btn_text'   => sanitize_text_field($_POST['afp_settings']['btn_text']),
+                'btn_color'  => sanitize_hex_color($_POST['afp_settings']['btn_color']),
+                'hide_title' => isset($_POST['afp_settings']['hide_title']) ? 1 : 0, // Guardamos el checkbox
             );
             update_post_meta($post_id, '_afp_settings', $clean_settings);
         }
 
-        // Guardar Campos
         if (isset($_POST['afp_fields'])) {
             $clean_fields = array();
             foreach ($_POST['afp_fields'] as $field) {

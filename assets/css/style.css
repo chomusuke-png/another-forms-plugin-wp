@@ -1,101 +1,112 @@
 /* Filas del Formulario */
 .afp-row {
-    margin-bottom: 25px;    /* Espacio entre campos */
+    margin-bottom: 20px;
 }
 
-/* Etiquetas (Labels) */
+/* Etiquetas (Labels) - Estilo limpio */
 .afp-row label {
     display: block;
-    margin-bottom: 8px;
-    font-weight: 600;       /* Negrita suave */
-    color: #333;            /* Gris oscuro */
-    font-size: 0.95rem;
-    letter-spacing: 0.3px;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #2c3e50;         /* Azul oscuro corporativo */
+    font-size: 0.9rem;
 }
 
-/* Inputs y Textarea */
+/* Inputs y Textarea - Estilo Plano */
 .afp-row input[type="text"],
 .afp-row input[type="email"],
+.afp-row input[type="number"],
 .afp-row textarea {
     width: 100%;
-    padding: 14px 16px;     /* Inputs más altos y cómodos */
-    border: 2px solid #f4f6f8; /* Borde inicial muy suave */
-    background-color: #f9fafb; /* Fondo grisáceo muy claro */
-    border-radius: 8px;
+    padding: 12px;
+    border: 1px solid #ccc; /* Borde simple gris */
+    background-color: #fff;
+    border-radius: 3px;     /* Bordes casi rectos */
     font-size: 1rem;
-    color: #444;
-    transition: all 0.3s ease; /* Animación suave */
-    box-sizing: border-box;    /* Asegura que no se salgan del contenedor */
+    color: #333;
+    transition: border-color 0.2s ease;
+    box-sizing: border-box;
+    box-shadow: none;       /* Sin sombras */
 }
 
-/* Efecto al hacer clic (Focus) */
+/* Efecto Focus - Solo cambio de color, sin resplandor */
 .afp-row input:focus,
 .afp-row textarea:focus {
-    border-color: #1a428a;
-    background-color: #ffffff;
+    border-color: #4a90e2;  /* Azul estándar para focus (o el del tema) */
     outline: none;
-    box-shadow: 0 0 0 4px rgba(148, 126, 30, 0.15); /* Resplandor mostaza */
+    box-shadow: none;
 }
 
 .afp-row textarea {
-    resize: vertical;       /* Permite redimensionar solo verticalmente */
-    min-height: 140px;      /* Altura mínima decente */
+    resize: vertical;
+    min-height: 120px;
 }
 
-/* Botón de Enviar */
+/* Botón de Enviar - Plano */
 .afp-btn {
     display: block;
-    width: 100%;            /* Botón ancho completo (se ve genial centrado) */
-    background-color: #1a428a;
+    width: 100%;
     color: white;
-    font-weight: 700;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    padding: 16px;
+    font-size: 0.9rem;
+    padding: 14px;
     border: none;
-    border-radius: 50px;    /* Estilo "Píldora" */
+    border-radius: 3px;     /* Rectangular */
     cursor: pointer;
-    font-size: 1rem;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    margin-top: 10px;
-    box-shadow: 0 4px 15px rgba(148, 126, 30, 0.3); /* Sombra de color */
+    margin-top: 15px;
+    box-shadow: none !important; /* Forzamos sin sombra */
+    transition: opacity 0.2s ease;
 }
 
 .afp-btn:hover {
-    background-color: #132f64; /* Un tono más oscuro */
-    transform: translateY(-3px); /* Se eleva un poco */
-    box-shadow: 0 8px 25px rgba(148, 126, 30, 0.4);
+    opacity: 0.9;           /* Efecto hover sutil */
+    transform: none;        /* Sin movimiento */
 }
 
-/* Mensajes de Alerta (Éxito/Error) */
+/* Mensajes de Alerta - Planos */
 .afp-alert {
-    padding: 15px 20px;
-    margin-bottom: 30px;
-    border-radius: 8px;
-    font-weight: 500;
-    text-align: center;     /* Texto centrado */
-    font-size: 0.95rem;
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 3px;
+    font-size: 0.9rem;
+    border: 1px solid transparent;
 }
 
 .afp-alert.success {
-    background-color: #e8f5e9;
-    color: #2e7d32;
-    border: 1px solid #c8e6c9;
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
 }
 
 .afp-alert.error {
-    background-color: #ffebee;
-    color: #c62828;
-    border: 1px solid #ffcdd2;
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
 }
 
-/* =========================================
-   RESPONSIVE (MÓVIL)
-   ========================================= */
+/* Captcha Row */
+.afp-captcha-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: #f8f9fa; /* Fondo gris muy suave para diferenciar */
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 3px;
+}
+.afp-captcha-label {
+    font-weight: bold;
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+.afp-captcha-input {
+    width: 80px !important; /* Input pequeño para el número */
+    margin: 0 !important;
+}
+
 @media (max-width: 600px) {
-    .afp-form {
-        margin: 30px 20px;  /* Margen lateral para que no pegue a los bordes */
-        padding: 30px 20px; /* Un poco menos de padding interno */
-        width: auto;        /* Se adapta */
+    .afp-form-container {
+        padding: 0;
     }
 }

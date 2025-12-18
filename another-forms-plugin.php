@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Another Forms Plugin (Dynamic)
  * Description: Sistema de formularios gestionable desde el admin.
- * Version: 2.0
+ * Version: 3.0
  * Author: Zumito
  * Text Domain: another-forms
  */
