@@ -1,0 +1,67 @@
+/* =========================================
+   UI COMPONENTS (Buttons, Alerts, Radios)
+   ========================================= */
+
+/* Botón de Enviar */
+.afp-btn {
+    display: block;
+    width: 100%;
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    padding: 14px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-top: 15px;
+    box-shadow: none !important;
+    transition: opacity 0.2s ease;
+}
+
+.afp-btn:hover {
+    opacity: 0.9;
+    transform: none;
+}
+
+/* Mensajes de Alerta */
+.afp-alert {
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 3px;
+    font-size: 0.9rem;
+    border: 1px solid transparent;
+}
+
+.afp-alert.success { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
+.afp-alert.error { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+
+/* Radio & Checkbox Groups */
+.afp-radio-group, .afp-check-group {
+    padding: 8px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.afp-inline-label {
+    display: flex !important;
+    align-items: center;
+    font-weight: normal !important;
+    cursor: pointer;
+    margin-right: 0 !important;
+}
+
+.afp-inline-label input[type="radio"],
+.afp-inline-label input[type="checkbox"] {
+    width: auto !important;
+    margin: 0 8px 0 0 !important;
+    height: 16px;
+    width: 16px;
+    box-shadow: none !important;
+    border: 1px solid #bbb;
+    min-height: 0; /* Reset de base */
+}
+
+/* Captcha */
+.afp-captcha-container { margin-bottom: 20px; }

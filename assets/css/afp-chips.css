@@ -1,0 +1,95 @@
+/* =========================================
+   CHIPS / TAGS COMPONENT
+   ========================================= */
+
+.afp-chips-wrapper {
+    min-height: 0; 
+}
+
+/* Contenedor Flex */
+.afp-chips-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    border: 1px solid #ccc;
+    background: #fff;
+    border-radius: 3px;
+    padding: 8px;
+    min-height: 48px;
+    box-sizing: border-box;
+}
+
+/* El Chip Visual */
+.afp-chip-item {
+    background-color: #e2e6ea;
+    color: #2c3e50;
+    border: 1px solid #dae0e5;
+    border-radius: 3px;
+    padding: 4px 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s;
+}
+
+.afp-chip-item:hover {
+    background-color: #dbe0e5;
+}
+
+/* La "X" para borrar */
+.afp-chip-remove {
+    cursor: pointer;
+    font-weight: bold;
+    color: #888;
+    line-height: 1;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+}
+.afp-chip-remove:hover {
+    color: #c0392b;
+}
+
+/* Botón "+ Añadir" */
+.afp-add-chip-trigger {
+    background: transparent;
+    border: 1px dashed #aaa;
+    color: #666;
+    border-radius: 3px;
+    padding: 4px 12px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    line-height: 1.4;
+    transition: all 0.2s;
+    height: 30px;
+}
+
+.afp-add-chip-trigger:hover {
+    border-color: #4a90e2;
+    color: #4a90e2;
+    background: #f0f8ff;
+}
+
+/* Input Inline */
+.afp-new-chip-input {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    padding: 4px 5px !important;
+    margin: 0 !important;
+    min-width: 100px;
+    max-width: 200px;
+    font-size: 0.95rem;
+    height: 30px !important;
+    outline: none !important;
+    color: #333;
+}
+
+/* Ajuste select */
+select.afp-new-chip-input {
+    cursor: pointer;
+    padding-right: 20px !important;
+}

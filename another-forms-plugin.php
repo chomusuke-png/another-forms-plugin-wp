@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Another Forms Plugin (Pro)
  * Description: Sistema de formularios modular con Drag & Drop y campos avanzados.
- * Version: 5.0
+ * Version: 5.1
  * Author: Zumito
  * Text Domain: another-forms
  */
@@ -31,8 +31,12 @@ class AnotherFormsPlugin {
     }
 
     public function enqueue_frontend_assets() {
-        wp_enqueue_style('afp-styles', AFP_URL . 'assets/css/style.css', array(), '4.0');
-        // NUEVO: Script para la lógica de los Chips en el frontend
+        // Cargar los 3 módulos CSS particionados
+        wp_enqueue_style('afp-base', AFP_URL . 'assets/css/afp-base.css', array(), '5.1');
+        wp_enqueue_style('afp-components', AFP_URL . 'assets/css/afp-components.css', array(), '5.1');
+        wp_enqueue_style('afp-chips', AFP_URL . 'assets/css/afp-chips.css', array(), '5.1');
+
+        // Script JS del frontend
         wp_enqueue_script('afp-frontend-js', AFP_URL . 'assets/js/frontend.js', array('jquery'), '1.0', true);
     }
 
