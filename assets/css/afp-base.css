@@ -153,8 +153,54 @@
     border-color: #666;
 }
 
+/* =========================================
+   GRID SYSTEM
+   ========================================= */
+
+/* Contenedor Flex para las columnas */
+.afp-fields-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -10px; /* Margen negativo para compensar padding interno */
+}
+
+/* Base de la columna */
+.afp-row {
+    padding: 0 10px; /* Espaciado entre columnas (Gutter) */
+    box-sizing: border-box;
+    margin-bottom: 20px;
+}
+
+/* Anchos de columna */
+.afp-col-100 {
+    width: 100%;
+    flex: 0 0 100%;
+}
+
+.afp-col-50 {
+    width: 50%;
+    flex: 0 0 50%;
+}
+
+.afp-col-33 {
+    width: 33.333%;
+    flex: 0 0 33.333%;
+}
+
+/* Ajuste para Secciones */
+.afp-section-break {
+    width: 100%;
+    flex: 0 0 100%;
+    padding: 0 10px;
+    box-sizing: border-box;
+}
+
 /* Responsive */
 @media (max-width: 600px) {
     .afp-form-container { padding: 0; }
     .afp-row { width: 100% !important; float: none !important; padding-right: 0 !important; }
+    .afp-col-50, .afp-col-33 {
+        width: 100%;
+        flex: 0 0 100%;
+    }
 }

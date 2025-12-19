@@ -3,43 +3,73 @@ if (!defined('ABSPATH')) exit;
 
 /**
  * Class AFP_Field_Renderer
- * Se encarga de generar el HTML de los inputs en el frontend.
+ * Genera el HTML de los inputs en el frontend utilizando clases CSS limpias.
  */
 class AFP_Field_Renderer {
 
+    /**
+     * Renderiza el campo.
+     * * @param array  $field Configuración del campo.
+     * @param int    $form_id ID del post formulario.
+     * @param string $name_override (Opcional) Nombre para inputs en repeaters.
+     */
     public static function render_input($field, $form_id, $name_override = null) {
-        $type  = $field['type'];
-        $label = $field['label'];
-        $req   = !empty($field['required']) ? 'required' : '';
+        $type  = isset($field['type']) ? $field['type'] : 'text';
+        $label = isset($field['label']) ? $field['label'] : '';
+        $req   = !empty($field['required']);
         $width = isset($field['width']) ? $field['width'] : '100';
         
-        $base_name = isset($field['name']) ? $field['name'] : '';
+        $base_name  = isset($field['name']) ? $field['name'] : '';
         $input_name = $name_override ? $name_override : "afp_data[$base_name]";
-        
-        // ID único
-        $field_id = 'afp_' . $base_name . '_' . $form_id . '_' . rand(1000,9999);
+
+        // Generación de ID Determinista (Accesibilidad + Caché compatible)
+        // Usamos un hash corto del nombre + form_id para que sea único pero constante.
+        $id_suffix = substr(md5($input_name . $form_id), 0, 6);
+        $field_id  = "afp_{$base_name}_{$id_suffix}";
+
+        // Si es plantilla JS (repeater), usamos un ID genérico
         if (strpos($input_name, '{{idx}}') !== false) {
-             $field_id = 'afp_' . $base_name . '_tpl'; 
+             $field_id = "afp_{$base_name}_tpl"; 
         }
 
-        $style = ($width !== '100') ? "float:left; width:{$width}%; padding-right:15px;" : "";
-        
+        // Mapeo de Ancho a Clases CSS
+        $width_class = 'afp-col-100';
+        if ($width === '50') $width_class = 'afp-col-50';
+        if ($width === '33') $width_class = 'afp-col-33';
+
+        // Renderizado de Sección (Header)
         if ($type === 'section') {
-            echo '<div class="afp-section-break" style="clear:both;"><h4>' . esc_html($label) . '</h4></div>';
+            echo '<div class="afp-section-break"><h4>' . esc_html($label) . '</h4></div>';
             return;
         }
 
-        echo '<div class="afp-row" style="' . esc_attr($style) . '">';
-        echo '<label>' . esc_html($label) . ($req ? ' <span class="req">*</span>' : '') . '</label>';
+        ?>
+        <div class="afp-row <?php echo esc_attr($width_class); ?>">
+            <label for="<?php echo esc_attr($field_id); ?>">
+                <?php echo esc_html($label); ?>
+                <?php if ($req): ?> <span class="req">*</span> <?php endif; ?>
+            </label>
+
+            <?php self::render_control($type, $input_name, $field_id, $field, $req); ?>
+        </div>
+        <?php
+    }
+
+    /**
+     * Renderiza el control específico (input, select, etc) separado de la estructura.
+     */
+    private static function render_control($type, $name, $id, $field, $is_req) {
+        $req_attr = $is_req ? 'required' : '';
+        $options  = isset($field['options']) ? $field['options'] : '';
 
         switch ($type) {
             case 'textarea':
-                echo '<textarea name="'.$input_name.'" rows="4" '.$req.'></textarea>';
+                echo '<textarea id="'.esc_attr($id).'" name="'.esc_attr($name).'" rows="4" '.$req_attr.'></textarea>';
                 break;
                 
             case 'select':
-                $opts = explode("\n", $field['options']);
-                echo '<select name="'.$input_name.'" '.$req.'>';
+                $opts = explode("\n", $options);
+                echo '<select id="'.esc_attr($id).'" name="'.esc_attr($name).'" '.$req_attr.'>';
                 echo '<option value="">-- Seleccionar --</option>';
                 foreach ($opts as $opt) { 
                     $opt = trim($opt); 
@@ -49,36 +79,49 @@ class AFP_Field_Renderer {
                 break;
                 
             case 'radio':
-                $opts = explode("\n", $field['options']);
+                $opts = explode("\n", $options);
                 echo '<div class="afp-radio-group">';
-                foreach ($opts as $opt) {
+                foreach ($opts as $idx => $opt) {
                     $opt = trim($opt);
-                    if ($opt) echo '<label class="afp-inline-label"><input type="radio" name="'.$input_name.'" value="'.esc_attr($opt).'" '.$req.'> '.esc_html($opt).'</label>';
+                    // ID único para cada opción del radio para accesibilidad
+                    $opt_id = $id . '_r_' . $idx; 
+                    if ($opt) {
+                        echo '<label class="afp-inline-label" for="'.esc_attr($opt_id).'">';
+                        echo '<input type="radio" id="'.esc_attr($opt_id).'" name="'.esc_attr($name).'" value="'.esc_attr($opt).'" '.$req_attr.'> '.esc_html($opt);
+                        echo '</label>';
+                    }
                 }
                 echo '</div>';
                 break;
                 
             case 'checkbox':
-                if (!empty($field['options'])) {
-                    $opts = explode("\n", $field['options']);
+                if (!empty($options)) {
+                    $opts = explode("\n", $options);
                     echo '<div class="afp-check-group">';
-                    foreach ($opts as $opt) {
+                    foreach ($opts as $idx => $opt) {
                         $opt = trim($opt);
-                        if ($opt) echo '<label class="afp-inline-label"><input type="checkbox" name="'.$input_name.'[]" value="'.esc_attr($opt).'"> '.esc_html($opt).'</label>';
+                        $opt_id = $id . '_c_' . $idx;
+                        if ($opt) {
+                            echo '<label class="afp-inline-label" for="'.esc_attr($opt_id).'">';
+                            echo '<input type="checkbox" id="'.esc_attr($opt_id).'" name="'.esc_attr($name).'[]" value="'.esc_attr($opt).'"> '.esc_html($opt);
+                            echo '</label>';
+                        }
                     }
                     echo '</div>';
                 } else {
-                    echo '<label class="afp-inline-label"><input type="checkbox" name="'.$input_name.'" value="Sí" '.$req.'> Confirmar</label>';
+                    echo '<label class="afp-inline-label" for="'.esc_attr($id).'">';
+                    echo '<input type="checkbox" id="'.esc_attr($id).'" name="'.esc_attr($name).'" value="Sí" '.$req_attr.'> Confirmar';
+                    echo '</label>';
                 }
                 break;
                 
             case 'chips':
-                $chip_name = $input_name; 
-                echo '<div class="afp-chips-wrapper" data-name="'.esc_attr($chip_name).'">';
-                echo '<div class="afp-chips-container">';
-                if (!empty($field['options'])) {
-                    $opts = explode("\n", $field['options']);
-                    echo '<select class="afp-new-chip-input" style="display:none;">';
+                // La lógica de chips es compleja visualmente, mantenemos estructura pero usamos ID
+                echo '<div class="afp-chips-wrapper" data-name="'.esc_attr($name).'">';
+                echo '<div class="afp-chips-container" id="'.esc_attr($id).'_container">';
+                if (!empty($options)) {
+                    $opts = explode("\n", $options);
+                    echo '<select class="afp-new-chip-input" id="'.esc_attr($id).'" style="display:none;">';
                     echo '<option value="">Seleccionar...</option>';
                     foreach ($opts as $opt) {
                         $opt = trim($opt);
@@ -86,21 +129,20 @@ class AFP_Field_Renderer {
                     }
                     echo '</select>';
                 } else {
-                    echo '<input type="text" class="afp-new-chip-input" style="display:none;" placeholder="Escribe...">';
+                    echo '<input type="text" class="afp-new-chip-input" id="'.esc_attr($id).'" style="display:none;" placeholder="Escribe...">';
                 }
                 echo '<button type="button" class="afp-add-chip-trigger">+ Añadir</button>';
                 echo '</div></div>';
                 break;
                 
-            default: // Inputs básicos
-                $extra_attrs = '';
+            default: // Inputs básicos (text, email, number, date, etc)
+                $extra = '';
                 if ($type === 'number') {
-                    if (isset($field['min_value']) && $field['min_value'] !== '') $extra_attrs .= ' min="'.esc_attr($field['min_value']).'"';
-                    if (isset($field['max_value']) && $field['max_value'] !== '') $extra_attrs .= ' max="'.esc_attr($field['max_value']).'"';
+                    if (isset($field['min_value']) && $field['min_value'] !== '') $extra .= ' min="'.esc_attr($field['min_value']).'"';
+                    if (isset($field['max_value']) && $field['max_value'] !== '') $extra .= ' max="'.esc_attr($field['max_value']).'"';
                 }
-                echo '<input type="'.$type.'" name="'.$input_name.'" '.$req.' '.$extra_attrs.'>';
+                echo '<input type="'.esc_attr($type).'" id="'.esc_attr($id).'" name="'.esc_attr($name).'" '.$req_attr.' '.$extra.'>';
                 break;
         }
-        echo '</div>';
     }
 }
