@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Another Forms Plugin (Pro)
  * Description: Sistema de formularios modular con Drag & Drop y campos avanzados.
- * Version: 5.1
+ * Version: 5.2
  * Author: Zumito
  * Text Domain: another-forms
  */
@@ -12,7 +12,11 @@ if (!defined('ABSPATH')) exit;
 define('AFP_PATH', plugin_dir_path(__FILE__));
 define('AFP_URL', plugin_dir_url(__FILE__));
 
-// Cargar Clases
+// 1. Cargar Vistas / Helpers (NUEVOS)
+require_once AFP_PATH . 'includes/class-afp-builder-ui.php';
+require_once AFP_PATH . 'includes/class-afp-field-renderer.php';
+
+// 2. Cargar Controladores
 require_once AFP_PATH . 'includes/class-afp-cpt.php';
 require_once AFP_PATH . 'includes/class-afp-admin.php';
 require_once AFP_PATH . 'includes/class-afp-renderer.php';
@@ -31,12 +35,9 @@ class AnotherFormsPlugin {
     }
 
     public function enqueue_frontend_assets() {
-        // Cargar los 3 módulos CSS particionados
-        wp_enqueue_style('afp-base', AFP_URL . 'assets/css/afp-base.css', array(), '5.1');
-        wp_enqueue_style('afp-components', AFP_URL . 'assets/css/afp-components.css', array(), '5.1');
-        wp_enqueue_style('afp-chips', AFP_URL . 'assets/css/afp-chips.css', array(), '5.1');
-
-        // Script JS del frontend
+        wp_enqueue_style('afp-base', AFP_URL . 'assets/css/afp-base.css', array(), '5.2');
+        wp_enqueue_style('afp-components', AFP_URL . 'assets/css/afp-components.css', array(), '5.2');
+        wp_enqueue_style('afp-chips', AFP_URL . 'assets/css/afp-chips.css', array(), '5.2');
         wp_enqueue_script('afp-frontend-js', AFP_URL . 'assets/js/frontend.js', array('jquery'), '1.0', true);
     }
 
