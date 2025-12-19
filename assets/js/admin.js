@@ -51,16 +51,16 @@ jQuery(document).ready(function($) {
             $card.find('.afp-slug-row, .afp-settings-row').show();
         }
 
-        // Opciones (Dropdown/Radio/Checkbox)
-        if (['select', 'radio', 'checkbox'].includes(type)) {
+        // MOSTRAR OPCIONES: Ahora incluimos 'chips' en la lista
+        if (['select', 'radio', 'checkbox', 'chips'].includes(type)) {
             $card.find('.afp-options-wrapper').slideDown();
         } else {
             $card.find('.afp-options-wrapper').slideUp();
         }
 
-        // Configuración Numérica (Min/Max) - NUEVO
+        // Configuración Numérica
         if (type === 'number') {
-            $card.find('.afp-number-wrapper').css('display', 'flex'); // Usamos flex para que estén juntos
+            $card.find('.afp-number-wrapper').css('display', 'flex');
         } else {
             $card.find('.afp-number-wrapper').hide();
         }

@@ -121,9 +121,36 @@ class AFP_Renderer {
                     echo '<label class="afp-inline-label"><input type="checkbox" name="afp_data['.$name.']" value="Sí" '.$req.'> Confirmar</label>';
                 }
                 break;
+            case 'chips':
+                echo '<div class="afp-chips-wrapper" data-name="afp_data['.esc_attr($name).']">';
+                
+                // Contenedor principal
+                echo '<div class="afp-chips-container">';
+                
+                // Input Oculto o Select Oculto (según si hay opciones definidas)
+                if (!empty($field['options'])) {
+                    // MODO PREDEFINIDO (SELECT)
+                    $opts = explode("\n", $field['options']);
+                    echo '<select class="afp-new-chip-input" style="display:none;">';
+                    echo '<option value="">Seleccionar...</option>';
+                    foreach ($opts as $opt) {
+                        $opt = trim($opt);
+                        if ($opt) echo '<option value="' . esc_attr($opt) . '">' . esc_html($opt) . '</option>';
+                    }
+                    echo '</select>';
+                } else {
+                    // MODO TEXTO LIBRE
+                    echo '<input type="text" class="afp-new-chip-input" style="display:none;" placeholder="Escribe...">';
+                }
+
+                // El botón "Trigger" que parece un chip más
+                echo '<button type="button" class="afp-add-chip-trigger">+ Añadir</button>';
+                
+                echo '</div>'; // Fin container
+                echo '</div>'; // Fin wrapper
+                break;
             default:
                 // CASO GENÉRICO (Texto, Email, Date, Number)
-                // Aquí aplicamos los atributos Min y Max si existen y si el campo es numérico
                 $extra_attrs = '';
                 if ($type === 'number') {
                     if (isset($field['min_value']) && $field['min_value'] !== '') $extra_attrs .= ' min="'.esc_attr($field['min_value']).'"';

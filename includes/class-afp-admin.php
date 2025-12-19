@@ -76,6 +76,7 @@ class AFP_Admin {
                 <button type="button" class="button afp-add-field" data-type="checkbox">Checkbox</button>
                 <button type="button" class="button afp-add-field" data-type="radio">Radio</button>
                 <button type="button" class="button afp-add-field" data-type="date">Fecha</button>
+                <button type="button" class="button afp-add-field" data-type="chips">Tags/Chips</button> 
                 <span class="afp-separator">|</span>
                 <button type="button" class="button afp-add-field button-primary" data-type="section"><strong>+ Sección</strong></button>
             </div>
@@ -111,7 +112,7 @@ class AFP_Admin {
         $min_val = isset($field['min_value']) ? $field['min_value'] : '';
         $max_val = isset($field['max_value']) ? $field['max_value'] : '';
         
-        $is_option_field = in_array($type, array('select', 'radio', 'checkbox'));
+        $is_option_field = in_array($type, array('select', 'radio', 'checkbox', 'chips'));
         $is_number_field = ($type === 'number');
         $is_section = ($type === 'section');
         
@@ -128,6 +129,7 @@ class AFP_Admin {
             'checkbox' => 'Checkbox',
             'radio'    => 'Radio',
             'date'     => 'Fecha',
+            'chips'    => 'Tags/Chips',
             'section'  => 'SECCIÓN'
         );
         ?>
