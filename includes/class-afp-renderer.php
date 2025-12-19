@@ -23,11 +23,9 @@ class AFP_Renderer {
         $title      = get_the_title($post_id);
         $unique_id  = 'afp-' . $post_id;
         
-        // Credenciales reCAPTCHA
         $site_key = isset($settings['recaptcha_site_key']) ? $settings['recaptcha_site_key'] : '';
         $use_captcha = !empty($site_key);
 
-        // Encolar Script de Google solo si hay Key
         if ($use_captcha) {
             wp_enqueue_script('google-recaptcha', 'https://www.google.com/recaptcha/api.js', array(), null, true);
         }
@@ -39,7 +37,6 @@ class AFP_Renderer {
         <style>
             #<?php echo $unique_id; ?> .afp-btn { background-color: <?php echo esc_attr($btn_color); ?>; }
             #<?php echo $unique_id; ?> .afp-btn:hover { filter: brightness(0.9); }
-            /* Espacio extra si hay captcha */
             .afp-captcha-container { margin-bottom: 20px; }
         </style>
 
@@ -125,7 +122,15 @@ class AFP_Renderer {
                 }
                 break;
             default:
-                echo '<input type="'.$type.'" name="afp_data['.$name.']" id="'.$field_id.'" '.$req.'>';
+                // CASO GENÉRICO (Texto, Email, Date, Number)
+                // Aquí aplicamos los atributos Min y Max si existen y si el campo es numérico
+                $extra_attrs = '';
+                if ($type === 'number') {
+                    if (isset($field['min_value']) && $field['min_value'] !== '') $extra_attrs .= ' min="'.esc_attr($field['min_value']).'"';
+                    if (isset($field['max_value']) && $field['max_value'] !== '') $extra_attrs .= ' max="'.esc_attr($field['max_value']).'"';
+                }
+                
+                echo '<input type="'.$type.'" name="afp_data['.$name.']" id="'.$field_id.'" '.$req.' '.$extra_attrs.'>';
                 break;
         }
         echo '</div>';

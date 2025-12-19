@@ -15,16 +15,10 @@ jQuery(document).ready(function($) {
         var index = new Date().getTime(); 
         
         var template = $('#afp-field-template').html();
-        
-        // El template ahora viene por defecto en 'text', así que solo reemplazamos el índice
         var html = template.replace(/__INDEX__/g, index);
-        
         var $el = $(html);
         
-        // Establecemos el valor del SELECTOR al tipo que se hizo clic
         $el.find('.afp-type-selector').val(type);
-
-        // Disparamos manualmente el evento change para configurar la vista inicial (mostrar opciones, etc)
         $el.find('.afp-type-selector').trigger('change');
 
         container.append($el);
@@ -43,12 +37,12 @@ jQuery(document).ready(function($) {
         $(this).toggleClass('dashicons-arrow-down-alt2 dashicons-arrow-up-alt2');
     });
 
-    // 5. EVENTO DE CAMBIO DE TIPO (NUEVO)
+    // 5. EVENTO DE CAMBIO DE TIPO
     $(document).on('change', '.afp-type-selector', function() {
         var type = $(this).val();
         var $card = $(this).closest('.afp-card');
         
-        // Manejo de estilos de Sección
+        // Secciones
         if (type === 'section') {
             $card.addClass('afp-section-card');
             $card.find('.afp-slug-row, .afp-settings-row').hide();
@@ -57,11 +51,18 @@ jQuery(document).ready(function($) {
             $card.find('.afp-slug-row, .afp-settings-row').show();
         }
 
-        // Manejo de visibilidad de Opciones (Dropdown/Checkbox/Radio)
+        // Opciones (Dropdown/Radio/Checkbox)
         if (['select', 'radio', 'checkbox'].includes(type)) {
             $card.find('.afp-options-wrapper').slideDown();
         } else {
             $card.find('.afp-options-wrapper').slideUp();
+        }
+
+        // Configuración Numérica (Min/Max) - NUEVO
+        if (type === 'number') {
+            $card.find('.afp-number-wrapper').css('display', 'flex'); // Usamos flex para que estén juntos
+        } else {
+            $card.find('.afp-number-wrapper').hide();
         }
     });
 });

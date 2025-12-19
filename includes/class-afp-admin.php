@@ -107,12 +107,18 @@ class AFP_Admin {
         $width = isset($field['width']) ? $field['width'] : '100';
         $options = isset($field['options']) ? $field['options'] : '';
         
+        // Nuevos campos Min/Max
+        $min_val = isset($field['min_value']) ? $field['min_value'] : '';
+        $max_val = isset($field['max_value']) ? $field['max_value'] : '';
+        
         $is_option_field = in_array($type, array('select', 'radio', 'checkbox'));
+        $is_number_field = ($type === 'number');
         $is_section = ($type === 'section');
+        
         $display_options = $is_option_field ? 'block' : 'none';
+        $display_number  = $is_number_field ? 'flex' : 'none'; // Flex para que se pongan lado a lado
         $card_class = $is_section ? 'afp-card afp-section-card' : 'afp-card';
         
-        // Lista de tipos disponibles
         $available_types = array(
             'text'     => 'Texto',
             'email'    => 'Email',
@@ -155,6 +161,15 @@ class AFP_Admin {
                 <div class="afp-form-row afp-options-wrapper" style="display:<?php echo $display_options; ?>">
                     <label>Opciones (Una por línea):
                         <textarea name="afp_fields[<?php echo $index; ?>][options]" rows="3" class="widefat"><?php echo esc_textarea($options); ?></textarea>
+                    </label>
+                </div>
+
+                <div class="afp-form-row afp-number-wrapper afp-flex" style="display:<?php echo $display_number; ?>; gap: 15px;">
+                    <label>Mínimo:
+                        <input type="number" name="afp_fields[<?php echo $index; ?>][min_value]" value="<?php echo esc_attr($min_val); ?>" class="widefat" style="width: 80px;">
+                    </label>
+                    <label>Máximo:
+                        <input type="number" name="afp_fields[<?php echo $index; ?>][max_value]" value="<?php echo esc_attr($max_val); ?>" class="widefat" style="width: 80px;">
                     </label>
                 </div>
 
@@ -201,12 +216,15 @@ class AFP_Admin {
                 if (empty($field['label'])) continue;
 
                 $clean_field = array(
-                    'type'     => sanitize_text_field($field['type']),
-                    'label'    => sanitize_text_field($field['label']),
-                    'name'     => sanitize_title($field['name']),
-                    'required' => isset($field['required']) ? 1 : 0,
-                    'width'    => sanitize_text_field($field['width']),
-                    'options'  => isset($field['options']) ? sanitize_textarea_field($field['options']) : '',
+                    'type'      => sanitize_text_field($field['type']),
+                    'label'     => sanitize_text_field($field['label']),
+                    'name'      => sanitize_title($field['name']),
+                    'required'  => isset($field['required']) ? 1 : 0,
+                    'width'     => sanitize_text_field($field['width']),
+                    'options'   => isset($field['options']) ? sanitize_textarea_field($field['options']) : '',
+                    // Guardamos Min/Max
+                    'min_value' => isset($field['min_value']) ? sanitize_text_field($field['min_value']) : '',
+                    'max_value' => isset($field['max_value']) ? sanitize_text_field($field['max_value']) : '',
                 );
                 $clean_fields[] = $clean_field;
             }
