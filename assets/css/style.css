@@ -7,16 +7,19 @@
 .afp-row label {
     display: block;
     margin-bottom: 6px;
-    font-weight: 600;
     color: #2c3e50;         /* Azul oscuro corporativo */
     font-size: 0.9rem;
 }
 
-/* Inputs y Textarea - Estilo Plano */
+/* Inputs, Textarea y DROPDOWNS (Select) - Estilo Plano Unificado */
 .afp-row input[type="text"],
 .afp-row input[type="email"],
 .afp-row input[type="number"],
-.afp-row textarea {
+.afp-row input[type="tel"],
+.afp-row input[type="url"],
+.afp-row input[type="date"],
+.afp-row textarea,
+.afp-row select {           /* <--- AÑADIDO: Select ahora hereda el estilo */
     width: 100%;
     padding: 12px;
     border: 1px solid #ccc; /* Borde simple gris */
@@ -27,14 +30,31 @@
     transition: border-color 0.2s ease;
     box-sizing: border-box;
     box-shadow: none;       /* Sin sombras */
+    
+    /* Asegura que el dropdown tenga la misma altura visual */
+    height: auto; 
+    min-height: 45px;
+    appearance: none;       /* Limpia estilos nativos en algunos navegadores */
+    -webkit-appearance: none;
+    -moz-appearance: none;
 }
 
-/* Efecto Focus - Solo cambio de color, sin resplandor */
+/* Icono de flecha para el Select (Truco CSS puro para reemplazar la flecha nativa fea) */
+.afp-row select {
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 10px;
+    padding-right: 30px; /* Espacio para que el texto no tape la flecha */
+}
+
+/* Efecto Focus */
 .afp-row input:focus,
-.afp-row textarea:focus {
-    border-color: #4a90e2;  /* Azul estándar para focus (o el del tema) */
+.afp-row textarea:focus,
+.afp-row select:focus {
+    border-color: #4a90e2;
     outline: none;
-    box-shadow: none;
+    background-color: #fff; /* Asegura fondo blanco al escribir */
 }
 
 .afp-row textarea {
@@ -42,7 +62,33 @@
     min-height: 120px;
 }
 
-/* Botón de Enviar - Plano */
+/* Radio & Checkbox Groups - Mejor alineación */
+.afp-radio-group, .afp-check-group {
+    padding: 8px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px; /* Espacio entre opciones */
+}
+
+.afp-inline-label {
+    display: flex !important; /* Flex para alinear caja y texto */
+    align-items: center;
+    font-weight: normal !important;
+    cursor: pointer;
+    margin-right: 0 !important; /* Usamos gap del padre */
+}
+
+.afp-inline-label input[type="radio"],
+.afp-inline-label input[type="checkbox"] {
+    width: auto !important;
+    margin: 0 8px 0 0 !important; /* Margen derecho pequeño */
+    height: 16px;
+    width: 16px;
+    box-shadow: none !important;
+    border: 1px solid #bbb;
+}
+
+/* Botón de Enviar */
 .afp-btn {
     display: block;
     width: 100%;
@@ -52,19 +98,19 @@
     font-size: 0.9rem;
     padding: 14px;
     border: none;
-    border-radius: 3px;     /* Rectangular */
+    border-radius: 3px;
     cursor: pointer;
     margin-top: 15px;
-    box-shadow: none !important; /* Forzamos sin sombra */
+    box-shadow: none !important;
     transition: opacity 0.2s ease;
 }
 
 .afp-btn:hover {
-    opacity: 0.9;           /* Efecto hover sutil */
-    transform: none;        /* Sin movimiento */
+    opacity: 0.9;
+    transform: none;
 }
 
-/* Mensajes de Alerta - Planos */
+/* Mensajes de Alerta */
 .afp-alert {
     padding: 12px;
     margin-bottom: 20px;
@@ -73,76 +119,30 @@
     border: 1px solid transparent;
 }
 
-.afp-alert.success {
-    background-color: #d4edda;
-    color: #155724;
-    border-color: #c3e6cb;
-}
-
-.afp-alert.error {
-    background-color: #f8d7da;
-    color: #721c24;
-    border-color: #f5c6cb;
-}
+.afp-alert.success { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
+.afp-alert.error { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }
 
 /* Captcha Row */
-.afp-captcha-row {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    background: #f8f9fa; /* Fondo gris muy suave para diferenciar */
-    padding: 10px;
-    border: 1px solid #eee;
-    border-radius: 3px;
-}
-.afp-captcha-label {
-    font-weight: bold;
-    font-size: 0.95rem;
-    white-space: nowrap;
-}
-.afp-captcha-input {
-    width: 80px !important; /* Input pequeño para el número */
-    margin: 0 !important;
-}
-
-@media (max-width: 600px) {
-    .afp-form-container {
-        padding: 0;
-    }
-}
-
-/* ... (Mantener estilos anteriores de .afp-form, inputs, botones) ... */
-
-/* Añadir esto al final */
+.afp-captcha-container { margin-bottom: 20px; }
 
 /* Columnas */
-.afp-fields-wrapper::after {
-    content: ""; display: table; clear: both;
-}
-
-/* Radio & Checkbox Groups */
-.afp-radio-group, .afp-check-group {
-    padding: 8px 0;
-}
-.afp-inline-label {
-    display: inline-block !important;
-    margin-right: 15px;
-    font-weight: normal !important;
-    cursor: pointer;
-}
-.afp-inline-label input {
-    width: auto !important;
-    margin-right: 5px;
-}
+.afp-fields-wrapper::after { content: ""; display: table; clear: both; }
 
 /* Separadores de Sección */
 .afp-section-break h4 {
-    margin: 20px 0 10px 0;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 5px;
+    margin: 25px 0 15px 0;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
     color: #444;
     font-size: 1.1rem;
+    font-weight: 600;
 }
 
-/* Requerido asterisco */
+/* Asterisco rojo */
 .req { color: #d9534f; }
+
+@media (max-width: 600px) {
+    .afp-form-container { padding: 0; }
+    /* En móvil las columnas se vuelven 100% */
+    .afp-row { width: 100% !important; float: none !important; padding-right: 0 !important; }
+}

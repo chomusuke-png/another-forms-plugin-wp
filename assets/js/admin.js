@@ -2,7 +2,7 @@ jQuery(document).ready(function($) {
     
     var container = $('#afp-fields-container');
     
-    // 1. Inicializar Sortable (Drag & Drop)
+    // 1. Inicializar Sortable
     container.sortable({
         handle: '.afp-handle',
         placeholder: 'afp-sortable-placeholder',
@@ -12,30 +12,20 @@ jQuery(document).ready(function($) {
     // 2. Añadir Campo
     $('.afp-add-field').on('click', function() {
         var type = $(this).data('type');
-        var index = new Date().getTime(); // ID único basado en timestamp
+        var index = new Date().getTime(); 
         
-        // Obtenemos el template HTML
         var template = $('#afp-field-template').html();
         
-        // Reemplazamos los placeholders
-        var html = template.replace(/__INDEX__/g, index).replace(/__TYPE__/g, type);
+        // El template ahora viene por defecto en 'text', así que solo reemplazamos el índice
+        var html = template.replace(/__INDEX__/g, index);
         
-        // Convertimos a objeto jQuery para modificarlo antes de insertar
         var $el = $(html);
         
-        $el.find('.afp-type-badge').text(type.charAt(0).toUpperCase() + type.slice(1));
-        $el.find('input[name*="[type]"]').val(type);
+        // Establecemos el valor del SELECTOR al tipo que se hizo clic
+        $el.find('.afp-type-selector').val(type);
 
-        // Si es sección, añadimos clase especial
-        if (type === 'section') {
-            $el.addClass('afp-section-card');
-            $el.find('.afp-form-row').not(':first').remove(); // Quitar opciones innecesarias
-        }
-
-        // Mostrar opciones de dropdown/checkbox si corresponde
-        if (['select', 'radio', 'checkbox'].includes(type)) {
-            $el.find('.afp-options-wrapper').show();
-        }
+        // Disparamos manualmente el evento change para configurar la vista inicial (mostrar opciones, etc)
+        $el.find('.afp-type-selector').trigger('change');
 
         container.append($el);
     });
@@ -47,9 +37,31 @@ jQuery(document).ready(function($) {
         }
     });
 
-    // 4. Toggle Body (Acordeón)
+    // 4. Toggle Body
     $(document).on('click', '.afp-toggle-body', function() {
         $(this).closest('.afp-card').find('.afp-card-body').slideToggle();
         $(this).toggleClass('dashicons-arrow-down-alt2 dashicons-arrow-up-alt2');
+    });
+
+    // 5. EVENTO DE CAMBIO DE TIPO (NUEVO)
+    $(document).on('change', '.afp-type-selector', function() {
+        var type = $(this).val();
+        var $card = $(this).closest('.afp-card');
+        
+        // Manejo de estilos de Sección
+        if (type === 'section') {
+            $card.addClass('afp-section-card');
+            $card.find('.afp-slug-row, .afp-settings-row').hide();
+        } else {
+            $card.removeClass('afp-section-card');
+            $card.find('.afp-slug-row, .afp-settings-row').show();
+        }
+
+        // Manejo de visibilidad de Opciones (Dropdown/Checkbox/Radio)
+        if (['select', 'radio', 'checkbox'].includes(type)) {
+            $card.find('.afp-options-wrapper').slideDown();
+        } else {
+            $card.find('.afp-options-wrapper').slideUp();
+        }
     });
 });

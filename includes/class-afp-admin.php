@@ -23,7 +23,6 @@ class AFP_Admin {
         $btn_color  = isset($settings['btn_color']) ? $settings['btn_color'] : '#1a428a';
         $hide_title = isset($settings['hide_title']) ? $settings['hide_title'] : 0;
         
-        // Nuevos campos para reCAPTCHA
         $site_key   = isset($settings['recaptcha_site_key']) ? $settings['recaptcha_site_key'] : '';
         $secret_key = isset($settings['recaptcha_secret_key']) ? $settings['recaptcha_secret_key'] : '';
         ?>
@@ -39,11 +38,11 @@ class AFP_Admin {
         <p><strong>Google reCAPTCHA v2</strong></p>
         <p>
             <label>Site Key:</label>
-            <input type="text" name="afp_settings[recaptcha_site_key]" value="<?php echo esc_attr($site_key); ?>" class="widefat" placeholder="Clave del sitio">
+            <input type="text" name="afp_settings[recaptcha_site_key]" value="<?php echo esc_attr($site_key); ?>" class="widefat">
         </p>
         <p>
             <label>Secret Key:</label>
-            <input type="text" name="afp_settings[recaptcha_secret_key]" value="<?php echo esc_attr($secret_key); ?>" class="widefat" placeholder="Clave secreta">
+            <input type="text" name="afp_settings[recaptcha_secret_key]" value="<?php echo esc_attr($secret_key); ?>" class="widefat">
         </p>
         <hr>
         <p>
@@ -92,10 +91,10 @@ class AFP_Admin {
             </div>
 
             <div id="afp-field-template" style="display:none;">
-                <?php $this->render_field_item('__INDEX__', array('type' => '__TYPE__', 'label' => '', 'name' => '', 'width' => '100')); ?>
+                <?php $this->render_field_item('__INDEX__', array('type' => 'text', 'label' => '', 'name' => '', 'width' => '100')); ?>
             </div>
             
-            <p class="description">Arrastra los elementos para reordenarlos.</p>
+            <p class="description">Arrastra para reordenar. Cambia el tipo usando el selector.</p>
         </div>
         <?php
     }
@@ -112,41 +111,54 @@ class AFP_Admin {
         $is_section = ($type === 'section');
         $display_options = $is_option_field ? 'block' : 'none';
         $card_class = $is_section ? 'afp-card afp-section-card' : 'afp-card';
-        $type_label = ucfirst($type);
+        
+        // Lista de tipos disponibles
+        $available_types = array(
+            'text'     => 'Texto',
+            'email'    => 'Email',
+            'textarea' => 'Área Texto',
+            'number'   => 'Número',
+            'select'   => 'Dropdown',
+            'checkbox' => 'Checkbox',
+            'radio'    => 'Radio',
+            'date'     => 'Fecha',
+            'section'  => 'SECCIÓN'
+        );
         ?>
         <div class="<?php echo $card_class; ?>" data-index="<?php echo $index; ?>">
             <div class="afp-card-header">
                 <span class="afp-handle dashicons dashicons-move"></span>
-                <span class="afp-type-badge"><?php echo $type_label; ?></span>
+                
+                <select name="afp_fields[<?php echo $index; ?>][type]" class="afp-type-selector">
+                    <?php foreach($available_types as $val => $txt): ?>
+                        <option value="<?php echo esc_attr($val); ?>" <?php selected($type, $val); ?>>
+                            <?php echo esc_html($txt); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+
                 <input type="text" class="afp-input-label-preview" name="afp_fields[<?php echo $index; ?>][label]" value="<?php echo esc_attr($label); ?>" placeholder="Etiqueta del campo">
                 
                 <div class="afp-actions">
                     <button type="button" class="afp-toggle-body dashicons dashicons-arrow-down-alt2"></button>
                     <button type="button" class="afp-remove-row dashicons dashicons-trash"></button>
                 </div>
-                
-                <input type="hidden" name="afp_fields[<?php echo $index; ?>][type]" value="<?php echo esc_attr($type); ?>">
             </div>
 
             <div class="afp-card-body">
-                <div class="afp-form-row">
-                    <?php if (!$is_section): ?>
+                <div class="afp-form-row afp-slug-row" style="<?php echo $is_section ? 'display:none;' : ''; ?>">
                     <label>ID/Name (Slug):
                         <input type="text" name="afp_fields[<?php echo $index; ?>][name]" value="<?php echo esc_attr($name); ?>" class="widefat">
                     </label>
-                    <?php endif; ?>
                 </div>
 
-                <?php if ($is_option_field): ?>
                 <div class="afp-form-row afp-options-wrapper" style="display:<?php echo $display_options; ?>">
                     <label>Opciones (Una por línea):
                         <textarea name="afp_fields[<?php echo $index; ?>][options]" rows="3" class="widefat"><?php echo esc_textarea($options); ?></textarea>
                     </label>
                 </div>
-                <?php endif; ?>
 
-                <?php if (!$is_section): ?>
-                <div class="afp-form-row afp-flex">
+                <div class="afp-form-row afp-flex afp-settings-row" style="<?php echo $is_section ? 'display:none;' : ''; ?>">
                     <label>
                         <input type="checkbox" name="afp_fields[<?php echo $index; ?>][required]" value="1" <?php checked($req, 1); ?>> Obligatorio
                     </label>
@@ -158,7 +170,6 @@ class AFP_Admin {
                         </select>
                     </label>
                 </div>
-                <?php endif; ?>
             </div>
         </div>
         <?php
