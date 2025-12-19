@@ -88,6 +88,34 @@ jQuery(document).ready(function($) {
         });
     });
 
+    // === LÓGICA REPEATER ===
+    
+    // Añadir Fila
+    $(document).on('click', '.afp-add-repeater-row', function(e) {
+        e.preventDefault();
+        var $group = $(this).closest('.afp-repeater-group');
+        var $container = $group.find('.afp-repeater-rows-container');
+        var template = $group.find('.afp-repeater-template').html();
+        
+        // Generar índice único (timestamp)
+        var newIdx = new Date().getTime();
+        
+        // Reemplazar placeholder {{idx}}
+        var rowHtml = template.replace(/{{idx}}/g, newIdx);
+        
+        $container.append(rowHtml);
+    });
+
+    // Eliminar Fila
+    $(document).on('click', '.afp-remove-repeater-row', function(e) {
+        e.preventDefault();
+        if (confirm('¿Borrar esta entrada?')) {
+            $(this).closest('.afp-repeater-row').slideUp(200, function() {
+                $(this).remove();
+            });
+        }
+    });
+
     function escapeHtml(text) {
         if (!text) return text;
         return text.replace(/[&<>"']/g, function(m) {
