@@ -70,21 +70,8 @@ class AFP_Admin {
         if (empty($fields)) $fields = array();
         ?>
         <div id="afp-builder-app">
-            <div class="afp-toolbar">
-                <button type="button" class="button afp-add-field" data-type="text">Texto</button>
-                <button type="button" class="button afp-add-field" data-type="email">Email</button>
-                <button type="button" class="button afp-add-field" data-type="textarea">Área Texto</button>
-                <button type="button" class="button afp-add-field" data-type="number">Número</button>
-                <button type="button" class="button afp-add-field" data-type="select">Dropdown</button>
-                <button type="button" class="button afp-add-field" data-type="checkbox">Checkbox</button>
-                <button type="button" class="button afp-add-field" data-type="radio">Radio</button>
-                <button type="button" class="button afp-add-field" data-type="date">Fecha</button>
-                <button type="button" class="button afp-add-field" data-type="chips">Tags/Chips</button>
-                <span class="afp-separator">|</span>
-                <button type="button" class="button afp-add-field button-primary" data-type="section"><strong>+ Sección</strong></button>
-                <button type="button" class="button afp-add-field" data-type="repeater_start" title="Inicio de grupo repetible">[ ...</button>
-                <button type="button" class="button afp-add-field" data-type="repeater_end" title="Fin de grupo repetible">... ]</button>
-            </div>
+            
+            <?php $this->render_toolbar('top'); ?>
 
             <div id="afp-fields-container" class="ui-sortable">
                 <?php 
@@ -96,11 +83,36 @@ class AFP_Admin {
                 ?>
             </div>
 
+            <?php $this->render_toolbar('bottom'); ?>
+
             <div id="afp-field-template" style="display:none;">
                 <?php $this->render_field_item('__INDEX__', array('type' => 'text', 'label' => '', 'name' => '', 'width' => '100')); ?>
             </div>
             
-            <p class="description">Arrastra para reordenar. Cambia el tipo usando el selector.</p>
+            <p class="description" style="margin-top:15px;">Arrastra los elementos para reordenarlos.</p>
+        </div>
+        <?php
+    }
+
+    /**
+     * Renderiza la barra de herramientas reutilizable.
+     */
+    private function render_toolbar($position = 'top') {
+        ?>
+        <div class="afp-toolbar <?php echo esc_attr($position); ?>">
+            <button type="button" class="button afp-add-field" data-type="text">Texto</button>
+            <button type="button" class="button afp-add-field" data-type="email">Email</button>
+            <button type="button" class="button afp-add-field" data-type="textarea">Área Texto</button>
+            <button type="button" class="button afp-add-field" data-type="number">Número</button>
+            <button type="button" class="button afp-add-field" data-type="select">Dropdown</button>
+            <button type="button" class="button afp-add-field" data-type="checkbox">Checkbox</button>
+            <button type="button" class="button afp-add-field" data-type="radio">Radio</button>
+            <button type="button" class="button afp-add-field" data-type="date">Fecha</button>
+            <button type="button" class="button afp-add-field" data-type="chips">Tags/Chips</button>
+            <span class="afp-separator">|</span>
+            <button type="button" class="button afp-add-field button-primary" data-type="section"><strong>+ Sección</strong></button>
+            <button type="button" class="button afp-add-field" data-type="repeater_start" title="Inicio de grupo repetible">[ ...</button>
+            <button type="button" class="button afp-add-field" data-type="repeater_end" title="Fin de grupo repetible">... ]</button>
         </div>
         <?php
     }
@@ -112,11 +124,9 @@ class AFP_Admin {
         $req = isset($field['required']) ? $field['required'] : 0;
         $width = isset($field['width']) ? $field['width'] : '100';
         $options = isset($field['options']) ? $field['options'] : '';
-        
         $min_val = isset($field['min_value']) ? $field['min_value'] : '';
         $max_val = isset($field['max_value']) ? $field['max_value'] : '';
         
-        // Tipos disponibles incluyendo Repeaters
         $available_types = array(
             'text'           => 'Texto',
             'email'          => 'Email',
@@ -132,7 +142,6 @@ class AFP_Admin {
             'repeater_end'   => 'FIN REPEATER'
         );
 
-        // Clases y visibilidad según tipo
         $card_class = 'afp-card';
         if ($type === 'section') $card_class .= ' afp-section-card';
         if ($type === 'repeater_start') $card_class .= ' afp-repeater-start-card';
@@ -148,54 +157,34 @@ class AFP_Admin {
         <div class="<?php echo $card_class; ?>" data-index="<?php echo $index; ?>">
             <div class="afp-card-header">
                 <span class="afp-handle dashicons dashicons-move"></span>
-                
                 <select name="afp_fields[<?php echo $index; ?>][type]" class="afp-type-selector">
                     <?php foreach($available_types as $val => $txt): ?>
-                        <option value="<?php echo esc_attr($val); ?>" <?php selected($type, $val); ?>>
-                            <?php echo esc_html($txt); ?>
-                        </option>
+                        <option value="<?php echo esc_attr($val); ?>" <?php selected($type, $val); ?>><?php echo esc_html($txt); ?></option>
                     <?php endforeach; ?>
                 </select>
-
-                <input type="text" class="afp-input-label-preview" name="afp_fields[<?php echo $index; ?>][label]" value="<?php echo esc_attr($label); ?>" placeholder="Etiqueta (o Título del Grupo)">
-                
+                <input type="text" class="afp-input-label-preview" name="afp_fields[<?php echo $index; ?>][label]" value="<?php echo esc_attr($label); ?>" placeholder="Etiqueta">
                 <div class="afp-actions">
                     <button type="button" class="afp-toggle-body dashicons dashicons-arrow-down-alt2"></button>
                     <button type="button" class="afp-remove-row dashicons dashicons-trash"></button>
                 </div>
             </div>
-
             <div class="afp-card-body">
                 <div class="afp-form-row afp-slug-row" style="<?php echo $hide_slug ? 'display:none;' : ''; ?>">
-                    <label>ID/Name (Slug):
-                        <input type="text" name="afp_fields[<?php echo $index; ?>][name]" value="<?php echo esc_attr($name); ?>" class="widefat">
-                        <?php if ($type === 'repeater_start'): ?>
-                            <small style="color:#666;">Este ID agrupará los datos (ej: <code>plantas</code>)</small>
-                        <?php endif; ?>
-                    </label>
+                    <label>ID/Name (Slug): <input type="text" name="afp_fields[<?php echo $index; ?>][name]" value="<?php echo esc_attr($name); ?>" class="widefat"></label>
+                    <?php if ($type === 'repeater_start'): ?>
+                        <small style="color:#666;">Este ID agrupará los datos (ej: <code>plantas</code>)</small>
+                    <?php endif; ?>
                 </div>
-
                 <div class="afp-form-row afp-options-wrapper" style="display:<?php echo $show_options ? 'block' : 'none'; ?>">
-                    <label>Opciones (Una por línea):
-                        <textarea name="afp_fields[<?php echo $index; ?>][options]" rows="3" class="widefat"><?php echo esc_textarea($options); ?></textarea>
-                    </label>
+                    <label>Opciones:<textarea name="afp_fields[<?php echo $index; ?>][options]" rows="3" class="widefat"><?php echo esc_textarea($options); ?></textarea></label>
                 </div>
-
                 <div class="afp-form-row afp-number-wrapper afp-flex" style="display:<?php echo $show_number ? 'flex' : 'none'; ?>; gap: 15px;">
-                    <label>Mínimo:
-                        <input type="number" name="afp_fields[<?php echo $index; ?>][min_value]" value="<?php echo esc_attr($min_val); ?>" class="widefat" style="width: 80px;">
-                    </label>
-                    <label>Máximo:
-                        <input type="number" name="afp_fields[<?php echo $index; ?>][max_value]" value="<?php echo esc_attr($max_val); ?>" class="widefat" style="width: 80px;">
-                    </label>
+                    <label>Min:<input type="number" name="afp_fields[<?php echo $index; ?>][min_value]" value="<?php echo esc_attr($min_val); ?>" class="widefat" style="width:80px;"></label>
+                    <label>Max:<input type="number" name="afp_fields[<?php echo $index; ?>][max_value]" value="<?php echo esc_attr($max_val); ?>" class="widefat" style="width:80px;"></label>
                 </div>
-
                 <div class="afp-form-row afp-flex afp-settings-row" style="<?php echo $hide_req ? 'display:none;' : ''; ?>">
-                    <label>
-                        <input type="checkbox" name="afp_fields[<?php echo $index; ?>][required]" value="1" <?php checked($req, 1); ?>> Obligatorio
-                    </label>
-                    
-                    <label style="margin-left: 20px; display: <?php echo $hide_width ? 'none' : 'block'; ?>">Ancho:
+                    <label><input type="checkbox" name="afp_fields[<?php echo $index; ?>][required]" value="1" <?php checked($req, 1); ?>> Obligatorio</label>
+                    <label style="margin-left:20px; display:<?php echo $hide_width ? 'none' : 'block'; ?>">Ancho:
                         <select name="afp_fields[<?php echo $index; ?>][width]">
                             <option value="100" <?php selected($width, '100'); ?>>100%</option>
                             <option value="50" <?php selected($width, '50'); ?>>50%</option>
@@ -229,10 +218,10 @@ class AFP_Admin {
         if (isset($_POST['afp_fields'])) {
             $clean_fields = array();
             $fields = array_values($_POST['afp_fields']); 
-
             foreach ($fields as $field) {
-                if (empty($field['label']) && $field['type'] !== 'repeater_end') continue; // label es obligatorio salvo en fin repeater
-
+                // Etiqueta es obligatoria salvo que sea fin de repeater
+                if (empty($field['label']) && $field['type'] !== 'repeater_end') continue;
+                
                 $clean_field = array(
                     'type'      => sanitize_text_field($field['type']),
                     'label'     => sanitize_text_field($field['label']),

@@ -5,13 +5,36 @@
     box-shadow: 0 1px 1px rgba(0,0,0,0.04);
 }
 
+/* Estilos Comunes de Toolbar */
 .afp-toolbar {
+    /* Flex para envolver los botones si hay muchos */
+    display: flex;
+    flex-wrap: wrap; 
+    gap: 5px;
+}
+
+/* Toolbar SUPERIOR */
+.afp-toolbar.top {
     margin-bottom: 20px;
     padding-bottom: 20px;
     border-bottom: 1px solid #eee;
 }
 
-.afp-toolbar .button { margin-right: 5px; margin-bottom: 5px; }
+/* Toolbar INFERIOR */
+.afp-toolbar.bottom {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    /* Resetear márgenes inferiores por si acaso */
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.afp-toolbar .button { 
+    margin-right: 0; /* Usamos gap en el contenedor flex */
+    margin-bottom: 0;
+}
 
 /* --- Tarjetas de Campos --- */
 .afp-card {
@@ -38,7 +61,7 @@
     margin-top: 2px;
 }
 
-/* NUEVO: Estilo para el Selector de Tipo */
+/* Selector de Tipo */
 .afp-type-selector {
     font-size: 11px;
     font-weight: 600;
@@ -73,7 +96,7 @@
     border-color: #8c8f94 !important;
 }
 
-/* --- Botones de Acción --- */
+/* Botones de Acción */
 .afp-actions {
     display: flex;
     align-items: center;
@@ -116,13 +139,19 @@
     margin: 0;
 }
 
-/* --- Cuerpo y Secciones --- */
+/* Cuerpo y Secciones */
 .afp-card-body { padding: 15px; display: none; border-top: 1px solid #f0f0f1; }
 .afp-form-row { margin-bottom: 12px; }
 .afp-flex { display: flex; align-items: center; }
 
+/* Tipos especiales */
 .afp-section-card { border-left: 4px solid #2271b1; }
 .afp-section-card .afp-card-header { background: #eaf4fc; }
+
+.afp-repeater-start-card { border-left: 4px solid #9933cc; }
+.afp-repeater-start-card .afp-card-header { background: #f8f0fc; }
+
+.afp-repeater-end-card { border-left: 4px solid #777; opacity: 0.8; }
 
 .afp-sortable-placeholder {
     border: 2px dashed #b5b5b5;
