@@ -5,6 +5,7 @@
 /* Filas del Formulario */
 .afp-row {
     margin-bottom: 20px;
+    box-sizing: border-box; /* IMPORTANTE: Para que width 50% + padding no sume más de 100% */
 }
 
 /* Etiquetas (Labels) */
@@ -67,7 +68,7 @@
     min-height: 120px;
 }
 
-/* Limpieza de floats para columnas */
+/* Limpieza de floats para columnas generales */
 .afp-fields-wrapper::after { content: ""; display: table; clear: both; }
 
 /* Separadores de Sección */
@@ -80,7 +81,10 @@
     font-weight: 600;
 }
 
-/* REPEATER GROUP */
+/* =========================================
+   REPEATER GROUP STYLES
+   ========================================= */
+
 .afp-repeater-group {
     border: 2px solid #e0e0e0;
     padding: 20px;
@@ -105,6 +109,16 @@
     margin-bottom: 10px;
     border-radius: 4px;
     position: relative; /* Para posicionar la X */
+    
+    /* SOLUCIÓN AL PROBLEMA DE DISEÑO ROTO: */
+    display: flow-root; /* Esto fuerza al contenedor a abrazar a los hijos flotantes */
+}
+
+/* Fallback para navegadores muy antiguos (opcional, flow-root es muy compatible hoy dia) */
+.afp-repeater-row::after {
+    content: "";
+    display: table;
+    clear: both;
 }
 
 /* Botón eliminar fila (X) */
@@ -118,6 +132,7 @@
     font-size: 20px;
     cursor: pointer;
     line-height: 1;
+    z-index: 10; /* Aseguramos que quede por encima */
 }
 .afp-remove-repeater-row:hover {
     color: #c0392b;
