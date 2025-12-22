@@ -1,10 +1,10 @@
 <?php
 /**
  * Plugin Name: Another Forms Plugin (Pro)
- * Description: Sistema de formularios modular con Drag & Drop y campos avanzados.
+ * Description: Sistema de formularios modular con campos avanzados.
  * Version: 5.2
  * Author: Zumito
- * Text Domain: another-forms
+ * Text Domain: another-plugins
  */
 
 if (!defined('ABSPATH')) exit;
