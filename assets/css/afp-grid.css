@@ -1,0 +1,55 @@
+/* =========================================
+   LAYOUT & GRID SYSTEM
+   ========================================= */
+
+/* Contenedor Principal Flex */
+.afp-fields-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -10px; /* Margen negativo para compensar el padding de las columnas */
+}
+
+/* Columnas (Celdas) */
+.afp-row {
+    padding: 0 10px; /* Espaciado lateral (Gutter) */
+    box-sizing: border-box;
+    margin-bottom: 20px;
+}
+
+/* Anchos Flexibles */
+.afp-col-100 {
+    width: 100%;
+    flex: 0 0 100%;
+}
+
+.afp-col-50 {
+    width: 50%;
+    flex: 0 0 50%;
+}
+
+.afp-col-33 {
+    width: 33.333%;
+    flex: 0 0 33.333%;
+}
+
+/* Separadores de Sección */
+.afp-section-break {
+    width: 100%;
+    flex: 0 0 100%;
+    padding: 10px 10px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+    border-bottom: 1px solid #eee;
+}
+
+/* Responsive: Colapso a una columna en móviles */
+@media (max-width: 600px) {
+    .afp-form-container { padding: 0; }
+    
+    .afp-col-50, 
+    .afp-col-33 {
+        width: 100%;
+        flex: 0 0 100%;
+    }
+}

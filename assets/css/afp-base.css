@@ -1,19 +1,14 @@
 /* =========================================
-   BASE LAYOUT & STANDARD INPUTS
+   BASE STYLES: INPUTS & TYPOGRAPHY
    ========================================= */
 
-/* Filas del Formulario */
-.afp-row {
-    margin-bottom: 20px;
-    box-sizing: border-box; /* IMPORTANTE: Para que width 50% + padding no sume más de 100% */
-}
-
 /* Etiquetas (Labels) */
-.afp-row label {
+label {
     display: block;
     margin-bottom: 6px;
     color: #2c3e50;
     font-size: 14px;
+    font-weight: 500;
 }
 
 /* Asterisco rojo para requeridos */
@@ -68,139 +63,10 @@
     min-height: 120px;
 }
 
-/* Limpieza de floats para columnas generales */
-.afp-fields-wrapper::after { content: ""; display: table; clear: both; }
-
-/* Separadores de Sección */
+/* Headers de Sección */
 .afp-section-break h4 {
-    margin: 25px 0 15px 0;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 8px;
+    margin: 0;
     color: #444;
     font-size: 1.1rem;
     font-weight: 600;
-}
-
-/* =========================================
-   REPEATER GROUP STYLES
-   ========================================= */
-
-.afp-repeater-group {
-    border: 2px solid #e0e0e0;
-    padding: 20px;
-    border-radius: 5px;
-    margin-bottom: 25px;
-    background: #fafafa;
-}
-
-.afp-repeater-group h4 {
-    margin-top: 0;
-    color: #1a428a;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 10px;
-    margin-bottom: 15px;
-}
-
-/* Fila individual */
-.afp-repeater-row {
-    background: #fff;
-    border: 1px solid #ddd;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 4px;
-    position: relative; /* Para posicionar la X */
-    
-    /* SOLUCIÓN AL PROBLEMA DE DISEÑO ROTO: */
-    display: flow-root; /* Esto fuerza al contenedor a abrazar a los hijos flotantes */
-}
-
-/* Fallback para navegadores muy antiguos (opcional, flow-root es muy compatible hoy dia) */
-.afp-repeater-row::after {
-    content: "";
-    display: table;
-    clear: both;
-}
-
-/* Botón eliminar fila (X) */
-.afp-remove-repeater-row {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background: transparent;
-    border: none;
-    color: #999;
-    font-size: 20px;
-    cursor: pointer;
-    line-height: 1;
-    z-index: 10; /* Aseguramos que quede por encima */
-}
-.afp-remove-repeater-row:hover {
-    color: #c0392b;
-}
-
-/* Botón agregar */
-.afp-add-repeater-row {
-    background: #e2e6ea;
-    border: 1px dashed #999;
-    color: #333;
-    padding: 8px 15px;
-    border-radius: 3px;
-    cursor: pointer;
-    font-weight: 600;
-}
-.afp-add-repeater-row:hover {
-    background: #dbe0e5;
-    border-color: #666;
-}
-
-/* =========================================
-   GRID SYSTEM
-   ========================================= */
-
-/* Contenedor Flex para las columnas */
-.afp-fields-wrapper {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0 -10px; /* Margen negativo para compensar padding interno */
-}
-
-/* Base de la columna */
-.afp-row {
-    padding: 0 10px; /* Espaciado entre columnas (Gutter) */
-    box-sizing: border-box;
-    margin-bottom: 20px;
-}
-
-/* Anchos de columna */
-.afp-col-100 {
-    width: 100%;
-    flex: 0 0 100%;
-}
-
-.afp-col-50 {
-    width: 50%;
-    flex: 0 0 50%;
-}
-
-.afp-col-33 {
-    width: 33.333%;
-    flex: 0 0 33.333%;
-}
-
-/* Ajuste para Secciones */
-.afp-section-break {
-    width: 100%;
-    flex: 0 0 100%;
-    padding: 0 10px;
-    box-sizing: border-box;
-}
-
-/* Responsive */
-@media (max-width: 600px) {
-    .afp-form-container { padding: 0; }
-    .afp-row { width: 100% !important; float: none !important; padding-right: 0 !important; }
-    .afp-col-50, .afp-col-33 {
-        width: 100%;
-        flex: 0 0 100%;
-    }
 }

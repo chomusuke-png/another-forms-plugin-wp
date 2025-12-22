@@ -1,0 +1,66 @@
+/* =========================================
+   REPEATER COMPONENT STYLES
+   ========================================= */
+
+.afp-repeater-group {
+    border: 2px solid #e0e0e0;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 25px;
+    background: #fafafa;
+}
+
+.afp-repeater-group h4 {
+    margin-top: 0;
+    color: #1a428a;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+/* Fila individual del repeater */
+.afp-repeater-row {
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    position: relative;
+    
+    /* Contexto de formato para contener flotantes internos si los hubiera */
+    display: flow-root; 
+}
+
+/* Botón eliminar fila (X) */
+.afp-remove-repeater-row {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: transparent;
+    border: none;
+    color: #999;
+    font-size: 20px;
+    cursor: pointer;
+    line-height: 1;
+    z-index: 10;
+}
+
+.afp-remove-repeater-row:hover {
+    color: #c0392b;
+}
+
+/* Botón agregar */
+.afp-add-repeater-row {
+    background: #e2e6ea;
+    border: 1px dashed #999;
+    color: #333;
+    padding: 8px 15px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.afp-add-repeater-row:hover {
+    background: #dbe0e5;
+    border-color: #666;
+}

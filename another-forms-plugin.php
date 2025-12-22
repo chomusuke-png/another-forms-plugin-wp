@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Another Forms Plugin (Pro)
  * Description: Sistema de formularios modular con campos avanzados.
- * Version: 5.2
+ * Version: 5.3
  * Author: Zumito
  * Text Domain: another-plugins
  */
@@ -35,9 +35,18 @@ class AnotherFormsPlugin {
     }
 
     public function enqueue_frontend_assets() {
-        wp_enqueue_style('afp-base', AFP_URL . 'assets/css/afp-base.css', array(), '5.2');
-        wp_enqueue_style('afp-components', AFP_URL . 'assets/css/afp-components.css', array(), '5.2');
-        wp_enqueue_style('afp-chips', AFP_URL . 'assets/css/afp-chips.css', array(), '5.2');
+        // 1. Estilos Base (Inputs, Tipografía)
+        wp_enqueue_style('afp-base', AFP_URL . 'assets/css/afp-base.css', array(), '5.3');
+        
+        // 2. Sistema de Grilla (Layout)
+        wp_enqueue_style('afp-grid', AFP_URL . 'assets/css/afp-grid.css', array('afp-base'), '5.3');
+        
+        // 3. Componentes Específicos
+        wp_enqueue_style('afp-components', AFP_URL . 'assets/css/afp-components.css', array('afp-base'), '5.2');
+        wp_enqueue_style('afp-repeater', AFP_URL . 'assets/css/afp-repeater.css', array('afp-base'), '5.3');
+        wp_enqueue_style('afp-chips', AFP_URL . 'assets/css/afp-chips.css', array('afp-base'), '5.2');
+        
+        // 4. Scripts JS
         wp_enqueue_script('afp-frontend-js', AFP_URL . 'assets/js/frontend.js', array('jquery'), '1.0', true);
     }
 
