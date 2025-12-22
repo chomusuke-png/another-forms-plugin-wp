@@ -122,6 +122,8 @@ class AFP_Admin {
                     'options'   => isset($field['options']) ? sanitize_textarea_field($field['options']) : '',
                     'min_value' => isset($field['min_value']) ? sanitize_text_field($field['min_value']) : '',
                     'max_value' => isset($field['max_value']) ? sanitize_text_field($field['max_value']) : '',
+                    'allowed_ext' => isset($field['allowed_ext']) ? sanitize_text_field($field['allowed_ext']) : '',
+                    'max_size'    => isset($field['max_size']) ? intval($field['max_size']) : 5,
                 );
                 $clean_fields[] = $clean_field;
             }

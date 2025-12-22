@@ -64,5 +64,12 @@ jQuery(document).ready(function($) {
         } else {
             $card.find('.afp-number-wrapper').hide();
         }
+
+        // Configuración de Archivos
+        if (type === 'file') {
+            $card.find('.afp-file-settings').css('display', 'flex');
+        } else {
+            $card.find('.afp-file-settings').hide();
+        }
     });
 });

@@ -44,7 +44,7 @@ class AFP_Renderer {
                 <h3 class="afp-title"><?php echo esc_html($title); ?></h3>
             <?php endif; ?>
 
-            <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post" class="afp-form">
+            <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post" class="afp-form" enctype="multipart/form-data">
                 <input type="hidden" name="action" value="process_another_form">
                 <input type="hidden" name="afp_form_id" value="<?php echo esc_attr($post_id); ?>">
                 <?php wp_nonce_field('afp_verify_action', 'afp_nonce'); ?>

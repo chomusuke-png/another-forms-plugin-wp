@@ -3,7 +3,7 @@ if (!defined('ABSPATH')) exit;
 
 /**
  * Class AFP_Handler
- * Procesa el envío del formulario y delega el renderizado del email a una vista.
+ * Procesa el envío del formulario, gestiona subidas de archivos y delega el email.
  */
 class AFP_Handler {
 
@@ -27,24 +27,66 @@ class AFP_Handler {
         $form_id  = intval($_POST['afp_form_id']);
         $settings = get_post_meta($form_id, '_afp_settings', true);
         
-        // 2. Validación ReCaptcha (Delegada a método privado para limpieza)
+        // 2. Validación ReCaptcha
         $this->verify_recaptcha($settings);
 
-        // 3. Procesamiento de Datos
-        $fields   = get_post_meta($form_id, '_afp_fields', true);
-        $raw_data = isset($_POST['afp_data']) ? $_POST['afp_data'] : array();
+        // 3. Procesamiento de Archivos
+        $attachments = array();
+        $fields = get_post_meta($form_id, '_afp_fields', true);
 
-        // Extraer email para Reply-To automáticamente
+        // Aseguramos que la clase de utilidad esté cargada
+        if (!class_exists('AFP_File_Uploader')) {
+            require_once plugin_dir_path(dirname(__DIR__)) . 'includes/utils/class-afp-file-uploader.php';
+        }
+
+        foreach ($fields as $field) {
+            if ($field['type'] !== 'file') continue;
+
+            $key = $field['name'];
+            
+            // Verificamos si el archivo existe en la estructura $_FILES['afp_data']
+            if (isset($_FILES['afp_data']) && isset($_FILES['afp_data']['name'][$key]) && !empty($_FILES['afp_data']['name'][$key])) {
+                
+                // Reconstruimos el array del archivo individual
+                $file_info = array(
+                    'name'     => $_FILES['afp_data']['name'][$key],
+                    'type'     => $_FILES['afp_data']['type'][$key],
+                    'tmp_name' => $_FILES['afp_data']['tmp_name'][$key],
+                    'error'    => $_FILES['afp_data']['error'][$key],
+                    'size'     => $_FILES['afp_data']['size'][$key],
+                );
+
+                $allowed = isset($field['allowed_ext']) ? $field['allowed_ext'] : '';
+                $max_mb  = isset($field['max_size']) ? $field['max_size'] : 5;
+
+                $upload = AFP_File_Uploader::handle_upload($file_info, $allowed, $max_mb);
+
+                if (is_wp_error($upload)) {
+                    wp_die($upload->get_error_message());
+                }
+
+                if ($upload) {
+                    // Guardamos la ruta física para adjuntar al correo
+                    $attachments[] = $upload['file'];
+                    
+                    // Guardamos la URL pública para mostrarla en el cuerpo del mensaje
+                    $_POST['afp_data'][$key] = $upload['url']; 
+                }
+            }
+        }
+
+        // 4. Procesamiento de Datos de Texto
+        $raw_data = isset($_POST['afp_data']) ? $_POST['afp_data'] : array();
         $reply_to = $this->extract_reply_to($fields, $raw_data);
         
-        // Preparar datos estructurados para la vista (No HTML aquí)
+        // Preparar datos para la vista
         $structured_data = $this->prepare_email_data($fields, $raw_data);
 
-        // 4. Renderizado del Email (Carga de Plantilla)
+        // 5. Renderizado y Envío
         $email_content = $this->render_email_template($form_id, $structured_data, $settings);
 
-        // 5. Envío
-        $this->send_email($settings, $form_id, $email_content, $reply_to);
+        // Pasamos los adjuntos a la función de envío
+        $this->send_email($settings, $form_id, $email_content, $reply_to, $attachments);
     }
 
     /**
@@ -53,7 +95,6 @@ class AFP_Handler {
     private function prepare_email_data($fields, $raw_data) {
         $data_output = array();
         
-        // Mapa de etiquetas para subcampos de repeaters
         $labels_map = array();
         foreach ($fields as $f) {
             if (!empty($f['name'])) $labels_map[$f['name']] = $f['label'];
@@ -106,7 +147,7 @@ class AFP_Handler {
                 continue;
             }
 
-            // -- CAMPO STANDARD --
+            // -- CAMPO STANDARD (incluye archivos ya convertidos a URL) --
             $key = $field['name'];
             if (isset($raw_data[$key])) {
                 $data_output[] = array(
@@ -124,21 +165,20 @@ class AFP_Handler {
      * Carga la plantilla HTML y retorna el string renderizado.
      */
     private function render_email_template($form_id, $data, $settings) {
-        // Variables para la vista
         $form_title = get_the_title($form_id);
         $site_name  = get_bloginfo('name');
         $colors     = array('btn_color' => isset($settings['btn_color']) ? $settings['btn_color'] : '#1a428a');
 
         ob_start();
         
-        // Ruta a la plantilla
-        $template_path = AFP_PATH . 'templates/emails/notification.php';
+        // Ajusta la ruta si moviste las carpetas, usamos dirname para subir niveles
+        // Asumiendo estructura: includes/core/class-afp-handler.php -> templates/emails/notification.php
+        $template_path = plugin_dir_path(dirname(__DIR__)) . 'templates/emails/notification.php';
         
         if (file_exists($template_path)) {
             include $template_path;
         } else {
             echo "<p>Error: Plantilla de correo no encontrada.</p>";
-            // Fallback simple para debug
             echo '<pre>' . print_r($data, true) . '</pre>';
         }
 
@@ -150,18 +190,17 @@ class AFP_Handler {
      */
     private function format_value($val) {
         if (is_array($val)) {
-            // Arrays simples (checkboxes/chips)
             $clean = array_map('sanitize_text_field', $val);
             return implode(", ", $clean);
         }
-        // nl2br permite ver saltos de línea de textareas en el HTML
         return nl2br(sanitize_textarea_field($val));
     }
 
     /**
-     * Envía el correo final.
+     * Envía el correo final con adjuntos.
+     * @param array $attachments Lista de rutas de archivos en el servidor.
      */
-    private function send_email($settings, $form_id, $body, $reply_to) {
+    private function send_email($settings, $form_id, $body, $reply_to, $attachments = array()) {
         $to      = !empty($settings['email']) ? $settings['email'] : get_option('admin_email');
         $subject = !empty($settings['subject']) ? $settings['subject'] : 'Nuevo Contacto';
         $full_subject = "[$subject] " . get_the_title($form_id);
@@ -171,7 +210,12 @@ class AFP_Handler {
             $headers[] = "Reply-To: <$reply_to>";
         }
 
-        $sent = wp_mail($to, $full_subject, $body, $headers);
+        // CORRECCIÓN PRINCIPAL: Pasamos $attachments a wp_mail
+        $sent = wp_mail($to, $full_subject, $body, $headers, $attachments);
+        
+        // Opcional: Eliminar temporales tras enviar (descomentar si se desea)
+        // foreach ($attachments as $file) { @unlink($file); }
+
         $this->redirect_with_status($sent ? 'success' : 'error');
     }
 

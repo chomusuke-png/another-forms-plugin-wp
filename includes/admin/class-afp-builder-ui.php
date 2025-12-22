@@ -52,6 +52,7 @@ class AFP_Builder_UI {
             <button type="button" class="button afp-add-field" data-type="radio">Radio</button>
             <button type="button" class="button afp-add-field" data-type="date">Fecha</button>
             <button type="button" class="button afp-add-field" data-type="chips">Tags/Chips</button>
+            <button type="button" class="button afp-add-field" data-type="file" style="border-color:#d4af37;">Archivo / Adjunto</button>
             <span class="afp-separator">|</span>
             <button type="button" class="button afp-add-field button-primary" data-type="section"><strong>+ Sección</strong></button>
             <button type="button" class="button afp-add-field" data-type="repeater_start" title="Inicio de grupo repetible">[ ...</button>
@@ -72,6 +73,8 @@ class AFP_Builder_UI {
         $options = isset($field['options']) ? $field['options'] : '';
         $min_val = isset($field['min_value']) ? $field['min_value'] : '';
         $max_val = isset($field['max_value']) ? $field['max_value'] : '';
+        $allowed_ext = isset($field['allowed_ext']) ? $field['allowed_ext'] : 'pdf, jpg, png';
+        $max_size    = isset($field['max_size']) ? $field['max_size'] : '5';
         
         $available_types = array(
             'text'           => 'Texto',
@@ -83,6 +86,7 @@ class AFP_Builder_UI {
             'radio'          => 'Radio',
             'date'           => 'Fecha',
             'chips'          => 'Tags/Chips',
+            'file'           => 'Subida de Archivo',
             'section'        => 'SECCIÓN (Título)',
             'repeater_start' => 'INICIO REPEATER',
             'repeater_end'   => 'FIN REPEATER'
@@ -95,6 +99,7 @@ class AFP_Builder_UI {
 
         $show_options = in_array($type, ['select', 'radio', 'checkbox', 'chips']);
         $show_number  = ($type === 'number');
+        $show_file_opts = ($type === 'file');
         $hide_slug    = in_array($type, ['section', 'repeater_end']);
         $hide_req     = in_array($type, ['section', 'repeater_start', 'repeater_end']);
         $hide_width   = in_array($type, ['section', 'repeater_start', 'repeater_end']);
@@ -158,6 +163,14 @@ class AFP_Builder_UI {
                             <?php endforeach; ?>
                         </div>
                     </div>
+                </div>
+                <div class="afp-form-row afp-file-settings" style="display:<?php echo $show_file_opts ? 'flex' : 'none'; ?>; gap: 15px; background: #fff8e5; padding: 10px; border: 1px dashed #e5cca8;">
+                    <label style="flex:1;">Extensiones (separadas por coma):
+                        <input type="text" name="afp_fields[<?php echo $index; ?>][allowed_ext]" value="<?php echo esc_attr($allowed_ext); ?>" class="widefat" placeholder="ej: pdf, docx">
+                    </label>
+                    <label style="width: 120px;">Max MB:
+                        <input type="number" name="afp_fields[<?php echo $index; ?>][max_size]" value="<?php echo esc_attr($max_size); ?>" class="widefat">
+                    </label>
                 </div>
             </div>
         </div>

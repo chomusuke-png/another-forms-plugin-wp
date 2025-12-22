@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Another Forms Plugin (Pro)
  * Description: Sistema de formularios modular con campos avanzados.
- * Version: 5.3
+ * Version: 6.0
  * Author: Zumito
  * Text Domain: another-plugins
  */
@@ -12,15 +12,20 @@ if (!defined('ABSPATH')) exit;
 define('AFP_PATH', plugin_dir_path(__FILE__));
 define('AFP_URL', plugin_dir_url(__FILE__));
 
-// 1. Cargar Vistas / Helpers (NUEVOS)
-require_once AFP_PATH . 'includes/class-afp-builder-ui.php';
-require_once AFP_PATH . 'includes/class-afp-field-renderer.php';
+// 1. Cargar Helpers / Utils
+require_once AFP_PATH . 'includes/utils/class-afp-file-uploader.php';
 
-// 2. Cargar Controladores
-require_once AFP_PATH . 'includes/class-afp-cpt.php';
-require_once AFP_PATH . 'includes/class-afp-admin.php';
-require_once AFP_PATH . 'includes/class-afp-renderer.php';
-require_once AFP_PATH . 'includes/class-afp-handler.php';
+// 2. Cargar Vistas / Frontend
+require_once AFP_PATH . 'includes/frontend/class-afp-field-renderer.php';
+require_once AFP_PATH . 'includes/frontend/class-afp-renderer.php';
+
+// 3. Cargar Admin / Backend
+require_once AFP_PATH . 'includes/admin/class-afp-builder-ui.php';
+require_once AFP_PATH . 'includes/admin/class-afp-admin.php';
+
+// 4. Cargar Core
+require_once AFP_PATH . 'includes/core/class-afp-cpt.php';
+require_once AFP_PATH . 'includes/core/class-afp-handler.php';
 
 class AnotherFormsPlugin {
     

@@ -134,6 +134,16 @@ class AFP_Field_Renderer {
                 echo '<button type="button" class="afp-add-chip-trigger">+ Añadir</button>';
                 echo '</div></div>';
                 break;
+            
+            case 'file':
+                $ext_msg = isset($field['allowed_ext']) ? $field['allowed_ext'] : 'pdf, jpg';
+                $max_mb  = isset($field['max_size']) ? $field['max_size'] : 5;
+                
+                echo '<input type="file" id="'.esc_attr($id).'" name="'.esc_attr($name).'" '.$req_attr.' accept=".'.str_replace(',', ',.', $ext_msg).'">';
+                echo '<small style="display:block; color:#777; margin-top:4px; font-size:0.85em;">';
+                echo 'Formatos: ' . esc_html($ext_msg) . ' (Max: ' . esc_html($max_mb) . 'MB)';
+                echo '</small>';
+                break;
                 
             default: // Inputs básicos (text, email, number, date, etc)
                 $extra = '';
