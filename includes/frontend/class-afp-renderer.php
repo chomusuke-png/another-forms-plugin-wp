@@ -102,6 +102,7 @@ class AFP_Renderer {
         $group_slug = $head['name'];
         $group_label = $head['label'];
         
+        echo '<div class="afp-col-100">';
         echo '<div class="afp-repeater-group" data-group="'.$group_slug.'">';
         echo '<h4>'.esc_html($group_label).'</h4>';
         echo '<div class="afp-repeater-rows-container">';
@@ -120,12 +121,19 @@ class AFP_Renderer {
 
     private function render_repeater_row_html($subfields, $form_id, $group_slug, $index) {
         echo '<div class="afp-repeater-row" data-index="'.$index.'">';
+        
+        // --- CORRECCIÓN: Wrapper para activar Flexbox/Grid ---
+        echo '<div class="afp-fields-wrapper">'; 
+        
         foreach ($subfields as $field) {
             $orig_name = $field['name'];
             $new_name_attr = "afp_data[$group_slug][$index][$orig_name]";
-            // DELEGACIÓN A LA NUEVA CLASE VISUAL
+            // Renderiza el campo
             AFP_Field_Renderer::render_input($field, $form_id, $new_name_attr);
         }
+        
+        echo '</div>'; // --- Cierre del Wrapper ---
+
         echo '<button type="button" class="afp-remove-repeater-row" title="Eliminar fila">&times;</button>';
         echo '</div>';
     }

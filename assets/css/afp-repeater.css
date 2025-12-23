@@ -26,6 +26,7 @@
     margin-bottom: 10px;
     border-radius: 4px;
     position: relative;
+    overflow: visible;
     
     /* Contexto de formato para contener flotantes internos si los hubiera */
     display: flow-root; 
@@ -34,19 +35,25 @@
 /* Botón eliminar fila (X) */
 .afp-remove-repeater-row {
     position: absolute;
-    top: 5px;
-    right: 5px;
-    background: transparent;
-    border: none;
-    color: #999;
-    font-size: 20px;
-    cursor: pointer;
-    line-height: 1;
-    z-index: 10;
+    top: -10px; /* Sacarlo un poco hacia arriba */
+    right: -10px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #c0392b;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 20;
 }
 
 .afp-remove-repeater-row:hover {
-    color: #c0392b;
+    background: #c0392b;
+    color: #fff;
+    border-color: #c0392b;
 }
 
 /* Botón agregar */
