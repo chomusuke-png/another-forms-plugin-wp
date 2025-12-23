@@ -58,7 +58,13 @@ class AnotherFormsPlugin {
     public function enqueue_admin_assets($hook) {
         global $post;
         if (($hook === 'post-new.php' || $hook === 'post.php') && $post->post_type === 'afp_form') {
-            wp_enqueue_style('afp-admin-css', AFP_URL . 'assets/css/admin.css', array(), '1.0');
+            
+            // 1. Estilos del Admin (Modularizados)
+            wp_enqueue_style('afp-admin-core', AFP_URL . 'assets/css/admin-core.css', array(), '6.0');
+            wp_enqueue_style('afp-admin-cards', AFP_URL . 'assets/css/admin-cards.css', array('afp-admin-core'), '6.0');
+            wp_enqueue_style('afp-admin-controls', AFP_URL . 'assets/css/admin-controls.css', array('afp-admin-core'), '6.0');
+            
+            // 2. Script del Admin
             wp_enqueue_script('afp-admin-js', AFP_URL . 'assets/js/admin.js', array('jquery', 'jquery-ui-sortable'), '1.0', true);
         }
     }

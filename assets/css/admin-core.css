@@ -1,0 +1,43 @@
+/* =========================================
+   CORE LAYOUT & TOOLBARS
+   ========================================= */
+
+#afp-builder-app {
+    background: #fff;
+    padding: 20px;
+    border: 1px solid #ccd0d4;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.04);
+}
+
+/* --- Toolbar Container --- */
+.afp-toolbar {
+    display: flex;
+    flex-wrap: wrap; 
+    gap: 5px;
+}
+
+/* Toolbar SUPERIOR */
+.afp-toolbar.top {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+/* Toolbar INFERIOR */
+.afp-toolbar.bottom {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.afp-toolbar .button { 
+    margin-right: 0;
+    margin-bottom: 0;
+}
+
+/* Helpers de Layout */
+.afp-flex { display: flex; align-items: center; }
+.description { margin-top: 15px; color: #666; font-style: italic; }
