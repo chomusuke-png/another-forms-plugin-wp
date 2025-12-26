@@ -29,7 +29,7 @@ class AFP_Admin {
         }
 
         // Ya no aplanamos nada. Pasamos la estructura de árbol directa.
-        AFP_Builder_UI::render_app($fields);
+        AFP_Builder_Core::render($fields);
     }
 
     /**
