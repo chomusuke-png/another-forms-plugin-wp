@@ -3,16 +3,12 @@
    ========================================= */
 
 .afp-card {
-    border: 1px solid #e5e5e5;
+    border: 1px solid #ccd0d4;
     background: #fff;
     margin-bottom: 10px;
     border-radius: 4px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
-    transition: box-shadow 0.2s;
-}
-
-.afp-card:hover {
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    transition: all 0.2s;
 }
 
 /* --- Header de la Tarjeta --- */
@@ -23,14 +19,11 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    cursor: move;
+    cursor: grab;
 }
+.afp-card-header:active { cursor: grabbing; }
 
-.afp-handle { 
-    cursor: move; 
-    color: #999; 
-    margin-top: 2px;
-}
+.afp-handle { color: #999; margin-top: 2px; }
 
 /* --- Cuerpo de la Tarjeta --- */
 .afp-card-body { 
@@ -42,23 +35,42 @@
 
 .afp-form-row { margin-bottom: 12px; }
 
-/* --- Tipos de Tarjetas (Colores) --- */
-/* Sección */
-.afp-section-card { border-left: 4px solid #2271b1; }
-.afp-section-card .afp-card-header { background: #eaf4fc; }
+/* === CONTENEDORES ANIDADOS (Secciones y Repeaters) === */
 
-/* Repeater Start */
-.afp-repeater-start-card { border-left: 4px solid #9933cc; }
-.afp-repeater-start-card .afp-card-header { background: #f8f0fc; }
+/* Zona de soltar items dentro de un contenedor */
+.afp-nested-sortable {
+    min-height: 60px;
+    padding: 10px;
+    background-color: #fbfbfb;
+    border: 2px dashed #e5e5e5;
+    border-radius: 4px;
+    margin-top: 15px;
+}
 
-/* Repeater End */
-.afp-repeater-end-card { border-left: 4px solid #777; opacity: 0.8; }
+/* Estilo específico para Sección */
+.afp-card[data-type="section"] { border-left: 4px solid #2271b1; }
+.afp-card[data-type="section"] > .afp-card-header { background: #eaf4fc; }
+
+/* Estilo específico para Repeater */
+.afp-card[data-type="repeater"] { border-left: 4px solid #9933cc; }
+.afp-card[data-type="repeater"] > .afp-card-header { background: #f8f0fc; }
+
+/* Ocultar el body de settings pero mostrar el área de drop siempre si es contenedor? 
+   No, mejor que el drop area sea parte del body pero visible. 
+   Vamos a forzar que el container de drop sea visible en la tarjeta padre. */
+
+.afp-dropzone-wrapper {
+    display: block;
+    padding: 0 15px 15px 15px;
+    background: #fff;
+}
 
 /* Placeholder al arrastrar */
 .afp-sortable-placeholder {
     border: 2px dashed #b5b5b5;
-    background: #f6f7f7;
-    height: 52px;
+    background: #f0f0f1;
+    height: 50px;
     margin-bottom: 10px;
     border-radius: 4px;
+    visibility: visible !important;
 }

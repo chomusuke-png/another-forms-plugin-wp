@@ -4,7 +4,6 @@ if (!defined('ABSPATH')) exit;
 /**
  * Class AFP_Handler
  * Procesa el envío del formulario, gestiona subidas de archivos y delega el email.
- * Actualizado para soportar estructura anidada (arrays de secciones y repeaters).
  */
 class AFP_Handler {
 
@@ -56,7 +55,6 @@ class AFP_Handler {
 
     /**
      * Estructura los datos del formulario recursivamente para el email.
-     * Soporta Secciones y Repeaters anidados.
      */
     private function prepare_email_data_recursive($fields, $data_context) {
         $output = array();
