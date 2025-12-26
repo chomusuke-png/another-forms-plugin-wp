@@ -15,6 +15,79 @@ class AFP_Admin {
     public function add_meta_boxes() {
         add_meta_box('afp_settings', 'Configuración General', array($this, 'render_settings_box'), 'afp_form', 'side', 'high');
         add_meta_box('afp_builder', 'Constructor Visual (Drag & Drop)', array($this, 'render_builder_box'), 'afp_form', 'normal', 'high');
+        add_meta_box('afp_entry_detail', 'Datos del Envío', array($this, 'render_entry_detail_box'), 'afp_entry', 'normal', 'high');
+    }
+
+    /**
+     * Renderiza la tabla de datos en la pantalla de "Entrada".
+     */
+    public function render_entry_detail_box($post) {
+        $data = get_post_meta($post->ID, '_afp_entry_data', true);
+
+        if (empty($data) || !is_array($data)) {
+            echo '<p>No hay datos registrados para esta entrada.</p>';
+            return;
+        }
+
+        echo '<table class="widefat striped" style="border:1px solid #ddd;">';
+        echo '<thead><tr><th style="width:30%;">Campo</th><th>Valor</th></tr></thead>';
+        echo '<tbody>';
+
+        foreach ($data as $item) {
+            $type  = isset($item['type']) ? $item['type'] : '';
+            $label = isset($item['label']) ? $item['label'] : '';
+            
+            // Caso Sección (Solo título visual)
+            if ($type === 'section') {
+                echo '<tr style="background:#f0f6fc;">';
+                echo '<td colspan="2"><strong>' . esc_html($label) . '</strong></td>';
+                echo '</tr>';
+                continue;
+            }
+
+            // Caso Repeater (Tabla anidada compleja)
+            if ($type === 'repeater') {
+                $rows = isset($item['rows']) ? $item['rows'] : array();
+                echo '<tr>';
+                echo '<td colspan="2">';
+                echo '<strong>' . esc_html($label) . '</strong>';
+                
+                if (!empty($rows)) {
+                    echo '<div style="margin-top:10px; border-left:3px solid #2271b1; padding-left:10px;">';
+                    foreach ($rows as $idx => $row) {
+                        echo '<p><strong>Registro #' . ($idx + 1) . '</strong></p>';
+                        echo '<ul style="margin-bottom:15px; list-style:disc; margin-left:20px;">';
+                        foreach ($row as $sub_label => $sub_value) {
+                            echo '<li><strong>' . esc_html($sub_label) . ':</strong> ' . wp_kses_post($sub_value) . '</li>';
+                        }
+                        echo '</ul>';
+                    }
+                    echo '</div>';
+                }
+                echo '</td>';
+                echo '</tr>';
+                continue;
+            }
+
+            // Caso Campo Normal
+            $value = isset($item['value']) ? $item['value'] : '';
+            echo '<tr>';
+            echo '<td><strong>' . esc_html($label) . '</strong></td>';
+            echo '<td>' . wp_kses_post($value) . '</td>';
+            echo '</tr>';
+        }
+
+        echo '</tbody>';
+        echo '</table>';
+        
+        // Metadata extra (Info técnica)
+        $raw = get_post_meta($post->ID, '_afp_entry_raw', true);
+        if ($raw) {
+            echo '<details style="margin-top:20px; color:#888;">';
+            echo '<summary style="cursor:pointer; font-size:11px;">Ver JSON crudo (Debug)</summary>';
+            echo '<pre style="background:#f9f9f9; padding:10px; font-size:10px; overflow:auto;">' . esc_html(json_encode($raw, JSON_PRETTY_PRINT)) . '</pre>';
+            echo '</details>';
+        }
     }
 
     /**
@@ -23,12 +96,7 @@ class AFP_Admin {
      */
     public function render_builder_box($post) {
         $fields = get_post_meta($post->ID, '_afp_fields', true);
-        
-        if (empty($fields) || !is_array($fields)) {
-            $fields = array();
-        }
-
-        // Ya no aplanamos nada. Pasamos la estructura de árbol directa.
+        if (empty($fields) || !is_array($fields)) $fields = array();
         AFP_Builder_Core::render($fields);
     }
 
@@ -92,6 +160,8 @@ class AFP_Admin {
         if (!isset($_POST['afp_nonce']) || !wp_verify_nonce($_POST['afp_nonce'], 'afp_save_data')) return;
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
         if (!current_user_can('edit_post', $post_id)) return;
+
+        if (get_post_type($post_id) !== 'afp_form') return;
 
         // 1. Guardar Configuración General
         if (isset($_POST['afp_settings'])) {
