@@ -1,6 +1,6 @@
 jQuery(document).ready(function($) {
     
-    // Función para inicializar Sortable (llamada al inicio y al añadir nuevos elementos)
+    // Función para inicializar Sortable y sus restricciones
     function initSortable() {
         $('.afp-nested-sortable').sortable({
             handle: '.afp-handle',
@@ -9,16 +9,42 @@ jQuery(document).ready(function($) {
             forcePlaceholderSize: true,
             tolerance: 'pointer',
             cursor: 'grabbing',
+            
+            // EVENTO CLAVE: Se dispara cuando un elemento se suelta en una lista conectada
+            receive: function(event, ui) {
+                var $item = ui.item;            // El elemento que se está moviendo
+                var $targetContainer = $(this); // El contenedor donde cayó
+                
+                var itemType = $item.data('type');
+
+                // --- RESTRICCIÓN DE ANIDACIÓN ---
+                // Si el elemento es un REPEATER, verificamos dónde ha caído.
+                if (itemType === 'repeater') {
+                    
+                    // Buscamos si el contenedor destino está dentro de (es hijo de) una tarjeta tipo 'repeater'.
+                    // Usamos .closest() para buscar hacia arriba en el DOM.
+                    var isInsideRepeater = $targetContainer.closest('.afp-card[data-type="repeater"]').length > 0;
+
+                    if (isInsideRepeater) {
+                        // BLOQUEO: Detectamos intento de anidación profunda de arrays
+                        alert('Restricción: No se permite colocar un Repeater dentro de otro Repeater.');
+                        
+                        // Cancelamos el movimiento visualmente (el item vuelve a su origen)
+                        $(ui.sender).sortable('cancel');
+                    }
+                }
+            },
+            
             stop: function(e, ui) {
-                // Opcional: acciones al soltar
+                // Lógica al detener el arrastre (si fuera necesaria)
             }
         });
     }
 
-    // 1. Inicializar al cargar
+    // 1. Inicializar al cargar la página
     initSortable();
 
-    // 2. Añadir Campo
+    // 2. Añadir Campo (Siempre al contenedor raíz primero)
     $('.afp-add-field').on('click', function() {
         var type = $(this).data('type');
         
@@ -29,13 +55,16 @@ jQuery(document).ready(function($) {
         var newId = 'card_' + new Date().getTime();
         $tpl.attr('id', newId);
 
-        // Insertar en el contenedor raíz (o podríamos mejorar para insertar en el activo)
+        // Insertar siempre en el raíz. 
+        // Nota: Esto es seguro porque el raíz nunca está "dentro" de un repeater.
+        // El usuario tendrá que arrastrarlo manualmente adentro si quiere anidarlo,
+        // y ahí se activará nuestra validación 'receive'.
         $('#afp-root-container').append($tpl);
         
-        // Reinicializar para que el nuevo elemento sea ordenable y si es contenedor reciba items
+        // Reinicializar sortable para que el nuevo elemento sea interactivo
         initSortable();
 
-        // Scroll al nuevo elemento
+        // Scroll suave al nuevo elemento
         $('html, body').animate({
             scrollTop: $tpl.offset().top - 100
         }, 500);
@@ -48,26 +77,21 @@ jQuery(document).ready(function($) {
         }
     });
 
-    // 4. Toggle Body
+    // 4. Toggle Body (Acordeón)
     $(document).on('click', '.afp-toggle-body', function() {
         $(this).closest('.afp-card').find('.afp-card-body').slideToggle();
         $(this).toggleClass('dashicons-arrow-down-alt2 dashicons-arrow-up-alt2');
     });
 
-    // 5. SERIALIZADOR JSON (Interceptar envío del form)
+    // 5. SERIALIZADOR JSON (Interceptar envío del form para guardar estructura)
     $('form#post').on('submit', function(e) {
-        // Recorrer el DOM y construir el objeto
         var structure = getStructureRecursive($('#afp-root-container'));
-        
-        // Meter el JSON en el input hidden
         $('#afp_form_structure_json').val(JSON.stringify(structure));
-        
-        // Continuar con el envío normal de WP
         return true;
     });
 
     /**
-     * Recorre recursivamente los elementos .afp-card y extrae sus datos
+     * Recorre recursivamente los elementos .afp-card para generar el JSON.
      */
     function getStructureRecursive($container) {
         var items = [];
@@ -76,26 +100,18 @@ jQuery(document).ready(function($) {
             var $card = $(this);
             var item = {};
 
-            // Leer tipo
             item.type = $card.data('type');
 
-            // Leer todos los inputs con clase .afp-js-val dentro de ESTA tarjeta (no hijos profundos)
-            // Usamos find() pero filtramos para no coger los de las tarjetas anidadas
+            // Leer inputs propios de la tarjeta (ignorando hijos anidados)
             $card.find('.afp-js-val').each(function() {
-                // Verificar que este input pertenece a esta tarjeta y no a una hija
                 if ($(this).closest('.afp-card')[0] === $card[0]) {
                     var key = $(this).data('key');
-                    var val;
-                    if ($(this).is(':checkbox')) {
-                        val = $(this).is(':checked') ? 1 : 0;
-                    } else {
-                        val = $(this).val();
-                    }
+                    var val = $(this).is(':checkbox') ? ($(this).is(':checked') ? 1 : 0) : $(this).val();
                     item[key] = val;
                 }
             });
 
-            // Si es contenedor, recursividad
+            // Recursión para contenedores (Secciones o Repeaters)
             var $subContainer = $card.find('.afp-nested-sortable').first();
             if ($subContainer.length > 0) {
                 var children = getStructureRecursive($subContainer);
@@ -109,5 +125,4 @@ jQuery(document).ready(function($) {
 
         return items;
     }
-
 });
