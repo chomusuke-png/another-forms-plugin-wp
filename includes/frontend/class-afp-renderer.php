@@ -88,6 +88,7 @@ class AFP_Renderer {
                 
                 echo '<div class="afp-section-container afp-col-100">';
                 echo '<div class="afp-section-break"><h4>' . esc_html($field['label']) . '</h4></div>';
+                echo '<div class="afp-fields-wrapper">';
                 
                 // Recursión para el contenido de la sección
                 // Nota: Las secciones no alteran el "name" de los inputs, son solo visuales/agrupadores.

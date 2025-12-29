@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Another Forms Plugin (Pro)
  * Description: Sistema de formularios modular.
- * Version: 7.5
+ * Version: 1.7.6
  * Author: Zumito
  * Text Domain: another-plugins
  */
